@@ -6,6 +6,7 @@ import { Button } from '../../../ui/components/Button';
 import { ElevationChart } from '../../race/components/ElevationChart';
 import type { SynthesisResult } from '../../../core/types/synthesis';
 import type { ElevationProfile } from '../../../core/types/race';
+import { latLngBounds } from 'leaflet';
 
 interface RouteDetailProps {
   result: SynthesisResult;
@@ -26,7 +27,7 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({
   
   // Calculate bounds for the map
   const positions = result.route.points.map(p => [p.lat, p.lon] as [number, number]);
-  const bounds = positions.length > 0 ? L.latLngBounds(positions) : undefined;
+  const bounds = positions.length > 0 ? latLngBounds(positions) : undefined;
   
   return (
     <div className="space-y-4">

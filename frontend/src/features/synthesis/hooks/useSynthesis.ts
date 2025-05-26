@@ -1,10 +1,9 @@
 import { useState, useCallback } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate as swrMutate } from 'swr';
 import { synthesisApi } from '../api/synthesis';
 import type {
   SynthesisRequest,
   SynthesisResponse,
-  SynthesisResult,
 } from '../../../core/types/synthesis';
 
 export const useSynthesis = () => {
@@ -59,12 +58,12 @@ export const useSynthesis = () => {
     try {
       await synthesisApi.saveToLibrary(currentSynthesisId, resultId, name);
       // Refresh races list
-      await mutate('/races');
+      await swrMutate('/races');
     } catch (err: any) {
       setError(err.response?.data?.error || err.message || 'Save failed');
       throw err;
     }
-  }, [currentSynthesisId, mutate]);
+  }, [currentSynthesisId]);
   
   return {
     generateRoutes,

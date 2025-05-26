@@ -1,0 +1,30 @@
+Volt Platform Setup Complete!
+
+All files have been created successfully.
+
+Next Steps:
+1. Install frontend dependencies:
+   cd frontend
+   npm install
+
+2. Set up environment variables:
+   - Copy frontend\.env.example to frontend\.env
+   - Copy backend\.env.example to backend\.env
+   - Update with your actual configuration values
+
+3. Install backend dependencies and run migrations:
+   cd backend
+   cargo build
+   cargo sqlx migrate run
+
+4. Start the development servers:
+   From root directory: npm run dev
+   Or separately:
+   - Frontend: cd frontend && npm run dev
+   - Backend: cd backend && cargo run
+
+5. Access the application:
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:3000
+
+For more information, see README.md

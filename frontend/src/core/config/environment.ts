@@ -15,11 +15,14 @@ export const env: Environment = {
 };
 
 export function validateEnvironment(): void {
-  const required = ['supabaseUrl', 'supabaseAnonKey'] as const;
-  
-  for (const key of required) {
-    if (!env[key]) {
-      throw new Error(`Missing required environment variable: ${key}`);
+  // Only validate Supabase in production
+  if (env.isProduction) {
+    const required = ['supabaseUrl', 'supabaseAnonKey'] as const;
+    
+    for (const key of required) {
+      if (!env[key]) {
+        throw new Error(`Missing required environment variable: ${key}`);
+      }
     }
   }
 }

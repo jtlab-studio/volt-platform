@@ -9,13 +9,12 @@ import { Button } from '../ui/components/Button';
 import { useRaceStore } from '../features/race/stores/raceStore';
 import { useElevationProfile, useGradientDistribution } from '../features/race/hooks/useRaces';
 import { ROLLING_WINDOW, ROUTES } from '../core/config/constants';
-import { BreadcrumbItem } from '../ui/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 
 const MatchPage: React.FC = () => {
   const { t } = useTranslation();
   const { selectedRace } = useRaceStore();
-  const [windowSize, setWindowSize] = useState(ROLLING_WINDOW.DEFAULT);
+  const [windowSize, setWindowSize] = useState<number>(ROLLING_WINDOW.DEFAULT);
   
   const { profile, isLoading: profileLoading } = useElevationProfile(
     selectedRace?.id || '',
@@ -26,11 +25,6 @@ const MatchPage: React.FC = () => {
     selectedRace?.id || '',
     windowSize
   );
-  
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Home', href: ROUTES.LANDING },
-    { label: t('nav.races') },
-  ];
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -47,7 +41,7 @@ const MatchPage: React.FC = () => {
             <RaceMetadata
               race={selectedRace}
               windowSize={windowSize}
-              onWindowSizeChange={setWindowSize}
+              onWindowSizeChange={(size) => setWindowSize(size)}
             />
             
             {profile && (

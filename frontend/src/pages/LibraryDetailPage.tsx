@@ -7,13 +7,12 @@ import { RaceMetadata } from '../features/race/components/RaceMetadata';
 import { Button } from '../ui/components/Button';
 import { useRace, useElevationProfile, useGradientDistribution } from '../features/race/hooks/useRaces';
 import { ROLLING_WINDOW, ROUTES } from '../core/config/constants';
-import { BreadcrumbItem } from '../ui/components/Breadcrumbs';
 import { SkeletonCard } from '../ui/components/Skeleton';
 
 const LibraryDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const [windowSize, setWindowSize] = useState(ROLLING_WINDOW.DEFAULT);
+  const [windowSize, setWindowSize] = useState<number>(ROLLING_WINDOW.DEFAULT);
   
   const { race, isLoading: raceLoading, error } = useRace(id || '');
   const { profile, isLoading: profileLoading } = useElevationProfile(
@@ -52,18 +51,12 @@ const LibraryDetailPage: React.FC = () => {
     );
   }
   
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Home', href: ROUTES.LANDING },
-    { label: t('nav.library'), href: ROUTES.LIBRARY },
-    { label: race.name },
-  ];
-  
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <RaceMetadata
         race={race}
         windowSize={windowSize}
-        onWindowSizeChange={setWindowSize}
+        onWindowSizeChange={(size) => setWindowSize(size)}
       />
       
       {profile && (

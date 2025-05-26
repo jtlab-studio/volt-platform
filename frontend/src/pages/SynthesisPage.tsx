@@ -8,8 +8,6 @@ import { RouteDetail } from '../features/synthesis/components/RouteDetail';
 import { useSynthesisStore } from '../features/synthesis/stores/synthesisStore';
 import { useSynthesis } from '../features/synthesis/hooks/useSynthesis';
 import { useElevationProfile } from '../features/race/hooks/useRaces';
-import { BreadcrumbItem } from '../ui/components/Breadcrumbs';
-import { ROUTES } from '../core/config/constants';
 import { useUIStore } from '../stores/uiStore';
 
 const SynthesisPage: React.FC = () => {
@@ -111,11 +109,6 @@ const SynthesisPage: React.FC = () => {
     }
   };
   
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Home', href: ROUTES.LANDING },
-    { label: t('nav.synthesis') },
-  ];
-  
   return (
     <div className="space-y-6">
       {/* Map and Controls Row */}
@@ -123,7 +116,6 @@ const SynthesisPage: React.FC = () => {
         <div className="lg:col-span-2">
           <MapSelector
             onBoundsSelect={setBoundingBox}
-            initialBounds={boundingBox || undefined}
           />
         </div>
         

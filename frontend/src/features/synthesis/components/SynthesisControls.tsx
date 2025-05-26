@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
 import { Button } from '../../../ui/components/Button';
 import { useRaces } from '../../race/hooks/useRaces';
-import { ROLLING_WINDOW, SYNTHESIS } from '../../../core/config/constants';
+import { ROLLING_WINDOW } from '../../../core/config/constants';
 import type { Race } from '../../../core/types/race';
 
 interface SynthesisControlsProps {

@@ -3,7 +3,6 @@ import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
-import { Button } from '../../../ui/components/Button';
 import { gpxFileSchema } from '../../../core/utils/validation';
 import { useRaceStore } from '../stores/raceStore';
 import clsx from 'clsx';

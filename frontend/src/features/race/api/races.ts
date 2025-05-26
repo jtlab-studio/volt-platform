@@ -1,5 +1,5 @@
 import { apiClient } from '../../../api/client';
-import { toCamelCase, toSnakeCase } from '../../../core/utils/transform';
+import { toCamelCase } from '../../../core/utils/transform';
 import type { Race, ElevationProfile, GradientDistribution } from '../../../core/types/race';
 
 export const racesApi = {

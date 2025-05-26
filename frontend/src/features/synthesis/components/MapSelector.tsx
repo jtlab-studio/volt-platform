@@ -17,7 +17,6 @@ L.Icon.Default.mergeOptions({
 
 interface MapSelectorProps {
   onBoundsSelect: (bounds: BoundingBox) => void;
-  initialBounds?: BoundingBox;
 }
 
 const DrawControl: React.FC<{ onBoundsSelect: (bounds: BoundingBox) => void }> = ({
@@ -80,7 +79,6 @@ const DrawControl: React.FC<{ onBoundsSelect: (bounds: BoundingBox) => void }> =
 
 export const MapSelector: React.FC<MapSelectorProps> = ({
   onBoundsSelect,
-  initialBounds,
 }) => {
   const { t } = useTranslation();
   const [mapCenter] = useState<[number, number]>([46.8182, 8.2275]); // Switzerland center

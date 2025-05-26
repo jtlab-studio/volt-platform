@@ -1,7 +1,5 @@
 import { create } from 'zustand';
-import { createClient } from '@supabase/supabase-js';
 import { env } from '../../../core/config/environment';
-import { authApi } from '../api/auth';
 
 interface User {
   id: string;
@@ -24,9 +22,39 @@ interface AuthState {
   clearError: () => void;
 }
 
-const supabase = createClient(env.supabaseUrl, env.supabaseAnonKey);
+// For development without Supabase
+const mockAuth = {
+  login: async (email: string, password: string): Promise<{ user: User; token: string } | null> => {
+    // Mock authentication - accept any email/password in dev
+    if (email && password) {
+      return {
+        user: {
+          id: 'dev-user-1',
+          email,
+          username: email.split('@')[0],
+        },
+        token: 'dev-token-123',
+      };
+    }
+    return null;
+  },
+  
+  signup: async (email: string, username: string, password: string): Promise<{ user: User; token: string } | null> => {
+    if (email && username && password) {
+      return {
+        user: {
+          id: 'dev-user-1',
+          email,
+          username,
+        },
+        token: 'dev-token-123',
+      };
+    }
+    return null;
+  },
+};
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
   isLoading: true,
@@ -37,31 +65,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Use mock auth in development
+      const result = await mockAuth.login(email, password);
       
-      if (error) throw error;
-      
-      if (data.user && data.session) {
-        const user: User = {
-          id: data.user.id,
-          email: data.user.email!,
-          username: data.user.user_metadata.username || data.user.email!.split('@')[0],
-        };
-        
+      if (result) {
         set({
-          user,
-          token: data.session.access_token,
+          user: result.user,
+          token: result.token,
           loading: false,
           error: null,
         });
-        
         return true;
       }
       
-      return false;
+      throw new Error('Invalid credentials');
     } catch (error: any) {
       set({
         loading: false,
@@ -75,36 +92,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username,
-          },
-        },
-      });
+      // Use mock auth in development
+      const result = await mockAuth.signup(email, username, password);
       
-      if (error) throw error;
-      
-      if (data.user && data.session) {
-        const user: User = {
-          id: data.user.id,
-          email: data.user.email!,
-          username,
-        };
-        
+      if (result) {
         set({
-          user,
-          token: data.session.access_token,
+          user: result.user,
+          token: result.token,
           loading: false,
           error: null,
         });
-        
         return true;
       }
       
-      return false;
+      throw new Error('Signup failed');
     } catch (error: any) {
       set({
         loading: false,
@@ -118,7 +119,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true });
     
     try {
-      await supabase.auth.signOut();
+      // Simple logout for development
       set({
         user: null,
         token: null,
@@ -137,27 +138,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session && session.user) {
-        const user: User = {
-          id: session.user.id,
-          email: session.user.email!,
-          username: session.user.user_metadata.username || session.user.email!.split('@')[0],
-        };
-        
-        set({
-          user,
-          token: session.access_token,
-          isLoading: false,
-        });
-      } else {
-        set({
-          user: null,
-          token: null,
-          isLoading: false,
-        });
-      }
+      // Check if we have a stored session (in a real app, this would check localStorage/cookies)
+      // For now, just set as not authenticated
+      set({
+        user: null,
+        token: null,
+        isLoading: false,
+      });
     } catch (error) {
       set({
         user: null,
@@ -170,25 +157,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   clearError: () => set({ error: null }),
 }));
 
-// Subscribe to auth state changes
-supabase.auth.onAuthStateChange((event, session) => {
-  const state = useAuthStore.getState();
-  
-  if (event === 'SIGNED_IN' && session) {
-    const user: User = {
-      id: session.user.id,
-      email: session.user.email!,
-      username: session.user.user_metadata.username || session.user.email!.split('@')[0],
-    };
-    
-    useAuthStore.setState({
-      user,
-      token: session.access_token,
-    });
-  } else if (event === 'SIGNED_OUT') {
-    useAuthStore.setState({
-      user: null,
-      token: null,
-    });
-  }
-});
+// Note: When ready to integrate Supabase, uncomment the following:
+/*
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = env.supabaseUrl && env.supabaseAnonKey 
+  ? createClient(env.supabaseUrl, env.supabaseAnonKey)
+  : null;
+
+// Then replace mock auth with real Supabase auth
+*/

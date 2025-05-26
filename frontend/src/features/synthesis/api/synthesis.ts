@@ -3,7 +3,6 @@ import { toCamelCase, toSnakeCase } from '../../../core/utils/transform';
 import type {
   SynthesisRequest,
   SynthesisResponse,
-  SynthesisResult,
 } from '../../../core/types/synthesis';
 
 export const synthesisApi = {

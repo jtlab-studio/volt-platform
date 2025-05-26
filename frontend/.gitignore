@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+*.pem
