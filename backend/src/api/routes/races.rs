@@ -280,7 +280,7 @@ async fn get_elevation_profile(
             .collect(),
         elevation: elevation_data.enhanced_altitude.clone(),
         smoothed,
-        window_size: params.window_size.unwrap_or(100),
+        window_size: params.window_size.unwrap_or(0),
     };
     
     Ok(Json(profile))
@@ -306,10 +306,13 @@ async fn get_gradient_distribution(
     let gpx_data: crate::core::models::race::GpxData = serde_json::from_str(&row.gpx_data)?;
     
     // Calculate gradient distribution
-    let distribution = calculate_gradient_distribution(&gpx_data, params.window_size.unwrap_or(100));
+    // If window size is 0, use a default of 100m for gradient calculations
+    let effective_window = if params.window_size.unwrap_or(0) == 0 { 100 } else { params.window_size.unwrap_or(100) };
+    let distribution = calculate_gradient_distribution(&gpx_data, effective_window);
     
     Ok(Json(distribution))
 }
 
 use axum::http::StatusCode;
+
 

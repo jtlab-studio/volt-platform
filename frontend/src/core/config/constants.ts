@@ -21,9 +21,9 @@ export const GRADIENT_BINS = {
 } as const;
 
 export const ROLLING_WINDOW = {
-  MIN: 10,
+  MIN: 0,
   MAX: 1000,
-  DEFAULT: 100,
+  DEFAULT: 0,
   STEP: 10,
 } as const;
 
@@ -44,3 +44,4 @@ export const CHART_OPTIONS = {
   MAINTAIN_ASPECT_RATIO: false,
   ANIMATION_DURATION: 300,
 } as const;
+

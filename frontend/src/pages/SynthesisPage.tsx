@@ -1,183 +1,11058 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { MapSelector } from '../features/synthesis/components/MapSelector';
-import { SynthesisControls } from '../features/synthesis/components/SynthesisControls';
-import { RouteResults } from '../features/synthesis/components/RouteResults';
-import { RouteDetail } from '../features/synthesis/components/RouteDetail';
-import { RaceLibrarySidebar } from '../features/race/components/RaceLibrarySidebar';
-import { useSynthesisStore } from '../features/synthesis/stores/synthesisStore';
-import { useSynthesis } from '../features/synthesis/hooks/useSynthesis';
-import { useElevationProfile } from '../features/race/hooks/useRaces';
-import { useUIStore } from '../stores/uiStore';
-
-const SynthesisPage: React.FC = () => {
-  const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const { addToast } = useUIStore();
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
-  const {
-    referenceRaceId,
-    boundingBox,
-    rollingWindow,
-    maxResults,
-    selectedResult,
-    setReferenceRace,
-    setBoundingBox,
-    setRollingWindow,
-    setMaxResults,
-    selectResult,
-  } = useSynthesisStore();
-  
-  const {
-    generateRoutes,
-    downloadGpx,
-    saveToLibrary,
-    results,
-    isGenerating,
-    error,
-  } = useSynthesis();
-  
-  const { profile } = useElevationProfile(
-    selectedResult?.id || '',
-    rollingWindow
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );E$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
   );
-  
-  useEffect(() => {
-    const refId = searchParams.get('ref');
-    if (refId) {
-      setReferenceRace(refId);
-    }
-  }, [searchParams, setReferenceRace]);
-  
-  const handleStartSynthesis = async () => {
-    if (!referenceRaceId || !boundingBox) {
-      addToast({
-        type: 'error',
-        message: 'Please select a reference race and draw an area on the map',
-      });
-      return;
-    }
-    
-    await generateRoutes({
-      referenceRaceId,
-      boundingBox,
-      rollingWindow,
-      maxResults,
-    });
-  };
-  
-  const handleDownload = async () => {
-    if (!selectedResult) return;
-    
-    try {
-      await downloadGpx(selectedResult.id);
-      addToast({
-        type: 'success',
-        message: 'GPX file downloaded successfully',
-      });
-    } catch (error) {
-      addToast({
-        type: 'error',
-        message: 'Failed to download GPX file',
-      });
-    }
-  };
-  
-  const handleSaveToLibrary = async () => {
-    if (!selectedResult) return;
-    
-    setIsSaving(true);
-    try {
-      const name = prompt('Enter a name for this route:');
-      if (!name) return;
-      
-      await saveToLibrary(selectedResult.id, name);
-      addToast({
-        type: 'success',
-        message: 'Route saved to library',
-      });
-    } catch (error) {
-      addToast({
-        type: 'error',
-        message: 'Failed to save route',
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-  
-  return (
-    <div className="flex gap-4 -mx-4 sm:-mx-6 lg:-mx-8">
-      {/* Main Content Area */}
-      <div className={`flex-1 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isSidebarOpen ? 'mr-80' : ''}`}>
-        <div className="space-y-6 max-w-full">
-          {/* Map and Controls Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
-              <MapSelector
-                onBoundsSelect={setBoundingBox}
-              />
-            </div>
-            
-            <div className="lg:col-span-1">
-              <SynthesisControls
-                selectedRaceId={referenceRaceId}
-                rollingWindow={rollingWindow}
-                maxResults={maxResults}
-                onRaceSelect={setReferenceRace}
-                onWindowChange={setRollingWindow}
-                onMaxResultsChange={setMaxResults}
-                onStartSynthesis={handleStartSynthesis}
-                isLoading={isGenerating}
-                canStart={!!referenceRaceId && !!boundingBox}
-              />
-            </div>
-          </div>
-          
-          {/* Results and Details Row */}
-          {(results.length > 0 || isGenerating || error) && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <RouteResults
-                  results={results}
-                  selectedResultId={selectedResult?.id || null}
-                  onResultSelect={selectResult}
-                  isLoading={isGenerating}
-                />
-              </div>
-              
-              {selectedResult && (
-                <div>
-                  <RouteDetail
-                    result={selectedResult}
-                    elevationProfile={profile}
-                    onDownload={handleDownload}
-                    onSaveToLibrary={handleSaveToLibrary}
-                    isSaving={isSaving}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-          
-          {error && (
-            <div className="p-4 rounded-lg bg-[#dc143c]/10 border border-[#dc143c]/20">
-              <p className="text-[#dc143c]">{error}</p>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Library Sidebar */}
-      <RaceLibrarySidebar
-        isOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-      />
-    </div>
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
   );
-};
-
-export default SynthesisPage;
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  );8$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );k$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );E$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );k$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );U$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );F$1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );U$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );E$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );?$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );E$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );X$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );F$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );X$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );E$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );F$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );,$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );6$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );8$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );A$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );`$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );6$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );8$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );3$1100, // Default window for synthesis
+    true // Always smoothed
+  );0$1100, // Default window for synthesis
+    true // Always smoothed
+  );0$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );$$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );?$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );8$1100, // Default window for synthesis
+    true // Always smoothed
+  );0$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );'$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );`$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );6$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );6$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );3$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );W$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );C$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );M$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );B$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );0$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );:$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );2$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );6$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );?$1100, // Default window for synthesis
+    true // Always smoothed
+  );.$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  );|$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );G$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );D$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );w$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  );&$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );#$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  );3$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  );0$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );#$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  );3$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );2$1100, // Default window for synthesis
+    true // Always smoothed
+  );0$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );N$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );m$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );-$1100, // Default window for synthesis
+    true // Always smoothed
+  );[$1100, // Default window for synthesis
+    true // Always smoothed
+  );#$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );1$1100, // Default window for synthesis
+    true // Always smoothed
+  );4$1100, // Default window for synthesis
+    true // Always smoothed
+  );3$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );]$1100, // Default window for synthesis
+    true // Always smoothed
+  );"$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );*$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );R$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );c$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );L$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );T$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );{$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );=$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );I$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );($1100, // Default window for synthesis
+    true // Always smoothed
+  );!$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );b$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );O$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );<$1100, // Default window for synthesis
+    true // Always smoothed
+  );/$1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );v$1100, // Default window for synthesis
+    true // Always smoothed
+  );>$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );)$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );}$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );x$1100, // Default window for synthesis
+    true // Always smoothed
+  );p$1100, // Default window for synthesis
+    true // Always smoothed
+  );o$1100, // Default window for synthesis
+    true // Always smoothed
+  );r$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );d$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );f$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );u$1100, // Default window for synthesis
+    true // Always smoothed
+  );l$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  ); $1100, // Default window for synthesis
+    true // Always smoothed
+  );S$1100, // Default window for synthesis
+    true // Always smoothed
+  );y$1100, // Default window for synthesis
+    true // Always smoothed
+  );n$1100, // Default window for synthesis
+    true // Always smoothed
+  );t$1100, // Default window for synthesis
+    true // Always smoothed
+  );h$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );i$1100, // Default window for synthesis
+    true // Always smoothed
+  );s$1100, // Default window for synthesis
+    true // Always smoothed
+  );P$1100, // Default window for synthesis
+    true // Always smoothed
+  );a$1100, // Default window for synthesis
+    true // Always smoothed
+  );g$1100, // Default window for synthesis
+    true // Always smoothed
+  );e$1100, // Default window for synthesis
+    true // Always smoothed
+  );;$1100, // Default window for synthesis
+    true // Always smoothed
+  );$1100, // Default window for synthesis
+    true // Always smoothed
+  );
+$1100, // Default window for synthesis
+    true // Always smoothed
+  );

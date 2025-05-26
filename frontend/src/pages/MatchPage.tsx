@@ -15,19 +15,22 @@ import { Link } from 'react-router-dom';
 const MatchPage: React.FC = () => {
   const { t } = useTranslation();
   const { selectedRace, updateRaceMetrics } = useRaceStore();
-  const [windowSize, setWindowSize] = useState<number>(100);
+  const [windowSize, setWindowSize] = useState<number>(0);
   const [isSmoothed, setIsSmoothed] = useState<boolean>(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
+  // Use window size only when smoothing is enabled
+  const effectiveWindowSize = isSmoothed ? windowSize : 0;
+  
   const { profile, isLoading: profileLoading } = useElevationProfile(
     selectedRace?.id || '',
-    windowSize,
+    effectiveWindowSize,
     isSmoothed
   );
   
   const { distribution, isLoading: distributionLoading } = useGradientDistribution(
     selectedRace?.id || '',
-    windowSize,
+    effectiveWindowSize,
     isSmoothed
   );
   
@@ -72,6 +75,7 @@ const MatchPage: React.FC = () => {
                   <RollingWindowSelector
                     windowSize={windowSize}
                     onWindowSizeChange={setWindowSize}
+                    isEnabled={isSmoothed}
                   />
                 </div>
               </div>
@@ -118,3 +122,4 @@ const MatchPage: React.FC = () => {
 };
 
 export default MatchPage;
+
