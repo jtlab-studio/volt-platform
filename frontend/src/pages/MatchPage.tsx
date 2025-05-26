@@ -34,38 +34,44 @@ const MatchPage: React.FC = () => {
         <RaceLibrary />
       </div>
       
-      {/* Right Column - Overview */}
+      {/* Middle and Right Columns - Overview */}
       <div className="lg:col-span-2 space-y-6">
         {selectedRace ? (
-          <>
-            <RaceMetadata
-              race={selectedRace}
-              windowSize={windowSize}
-              onWindowSizeChange={(size) => setWindowSize(size)}
-            />
-            
-            {profile && (
-              <ElevationChart
-                profile={profile}
-                isLoading={profileLoading}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {/* Left side - Race info and elevation */}
+            <div className="space-y-6">
+              <RaceMetadata
+                race={selectedRace}
+                windowSize={windowSize}
+                onWindowSizeChange={(size) => setWindowSize(size)}
               />
-            )}
-            
-            {distribution && (
-              <GradientDistribution
-                distribution={distribution}
-                isLoading={distributionLoading}
-              />
-            )}
-            
-            <div className="flex justify-end">
-              <Link to={`${ROUTES.SYNTHESIS}?ref=${selectedRace.id}`}>
-                <Button size="lg">
-                  {t('race.generateSimilar')}
-                </Button>
-              </Link>
+              
+              {profile && (
+                <ElevationChart
+                  profile={profile}
+                  isLoading={profileLoading}
+                />
+              )}
             </div>
-          </>
+            
+            {/* Right side - Gradient distributions */}
+            <div className="space-y-6">
+              {distribution && (
+                <GradientDistribution
+                  distribution={distribution}
+                  isLoading={distributionLoading}
+                />
+              )}
+              
+              <div className="flex justify-end">
+                <Link to={`${ROUTES.SYNTHESIS}?ref=${selectedRace.id}`}>
+                  <Button size="lg">
+                    {t('race.generateSimilar')}
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="bg-white/20 dark:bg-[#1e1e1e]/40 backdrop-blur-md rounded-2xl p-12 text-center">
             <p className="text-[#14181b] dark:text-[#ffffff]">

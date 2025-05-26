@@ -15,10 +15,13 @@ const createApiClient = (): AxiosInstance => {
   // Request interceptor to add auth token
   client.interceptors.request.use(
     (config) => {
-      const token = useAuthStore.getState().token;
+      const state = useAuthStore.getState();
+      const token = state.token;
+      
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      
       return config;
     },
     (error) => {
@@ -36,7 +39,14 @@ const createApiClient = (): AxiosInstance => {
       
       if (error.response.status === 401) {
         // Clear auth state and redirect to login
-        useAuthStore.getState().logout();
+        const currentPath = window.location.pathname;
+        
+        // Only clear auth and redirect if we're not already on auth pages
+        if (!currentPath.includes('/login') && !currentPath.includes('/signup')) {
+          useAuthStore.getState().logout();
+          window.location.href = '/login';
+        }
+        
         throw new AuthenticationError('Session expired. Please login again.');
       }
       

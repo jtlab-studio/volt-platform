@@ -35,9 +35,10 @@ export const useRaceStore = create<RaceState>((set) => ({
         error: null,
       });
     } catch (error: any) {
+      console.error('Upload error:', error);
       set({
         isUploading: false,
-        error: error.response?.data?.error || error.message || 'Upload failed',
+        error: error.message || 'Upload failed',
       });
     }
   },
@@ -59,7 +60,7 @@ export const useRaceStore = create<RaceState>((set) => ({
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.error || error.message || 'Delete failed',
+        error: error.message || 'Delete failed',
       });
     }
   },

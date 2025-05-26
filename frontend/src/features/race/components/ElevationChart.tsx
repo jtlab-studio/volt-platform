@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -39,6 +39,17 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
   isLoading = false,
 }) => {
   const { t } = useTranslation();
+  
+  // Log the profile data
+  useEffect(() => {
+    console.log('=== ELEVATION CHART DATA ===');
+    console.log('Profile points:', profile.distance.length);
+    console.log('Distance range:', profile.distance[0], 'to', profile.distance[profile.distance.length - 1]);
+    console.log('Elevation range:', Math.min(...profile.elevation), 'to', Math.max(...profile.elevation));
+    console.log('Smoothed:', profile.smoothed);
+    console.log('Window size:', profile.windowSize);
+    console.log('========================');
+  }, [profile]);
   
   const chartData = useMemo(() => ({
     labels: profile.distance.map((d) => d.toFixed(1)),

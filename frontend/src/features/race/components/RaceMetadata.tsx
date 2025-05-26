@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
 import { ROLLING_WINDOW } from '../../../core/config/constants';
@@ -17,13 +17,26 @@ export const RaceMetadata: React.FC<RaceMetadataProps> = ({
 }) => {
   const { t } = useTranslation();
   
+  // Log the race data to verify it's real
+  useEffect(() => {
+    console.log('=== RACE METADATA ===');
+    console.log('Race ID:', race.id);
+    console.log('Race Name:', race.name);
+    console.log('Distance:', race.distanceKm, 'km');
+    console.log('Elevation Gain:', race.elevationGainM, 'm');
+    console.log('Elevation Loss:', race.elevationLossM, 'm');
+    console.log('ITRA:', race.itraEffortDistance);
+    console.log('GPX Data points:', JSON.parse(race.gpxData).points.length);
+    console.log('===================');
+  }, [race]);
+  
   return (
     <GlassPanel>
       <h3 className="text-lg font-semibold text-[#121212] dark:text-[#f1f4f8] mb-4">
         {race.name}
       </h3>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
         <div>
           <p className="text-sm text-[#14181b] dark:text-[#ffffff]">
             {t('race.totalDistance')}

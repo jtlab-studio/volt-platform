@@ -1,11 +1,5 @@
-use axum::{
-    routing::{get, post},
-    Router,
-};
 use dotenv::dotenv;
-use sqlx::sqlite::SqlitePoolOptions;
 use std::net::SocketAddr;
-use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber;
 
 mod api;
@@ -17,6 +11,7 @@ mod errors;
 
 use crate::api::server::create_app;
 use crate::config::settings::Settings;
+use crate::db::pool::{create_pool, migrate};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -28,17 +23,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // Load configuration
     let settings = Settings::new()?;
+    settings.validate()?;
     
     // Create database pool
-    let db_pool = SqlitePoolOptions::new()
-        .max_connections(5)
-        .connect(&settings.database_url)
-        .await?;
+    let db_pool = create_pool(&settings).await?;
     
     // Run migrations
-    sqlx::migrate!("./migrations")
-        .run(&db_pool)
-        .await?;
+    migrate(&db_pool).await?;
     
     // Create app
     let app = create_app(db_pool, settings.clone());
@@ -47,9 +38,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = SocketAddr::from(([127, 0, 0, 1], settings.port));
     tracing::info!("Listening on {}", addr);
     
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await?;
+    let listener = tokio::net::TcpListener::bind(addr).await?;
+    axum::serve(listener, app).await?;
     
     Ok(())
 }

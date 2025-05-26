@@ -23,17 +23,28 @@ interface AuthResponse {
 
 export const authApi = {
   login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post('/auth/login', toSnakeCase(data));
-    return toCamelCase(response.data);
+    try {
+      const response = await apiClient.post('/auth/login', toSnakeCase(data));
+      return toCamelCase(response.data);
+    } catch (error: any) {
+      console.error('Login error:', error.response?.data || error.message);
+      throw error;
+    }
   },
   
   signup: async (data: SignupRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post('/auth/signup', toSnakeCase(data));
-    return toCamelCase(response.data);
+    try {
+      const response = await apiClient.post('/auth/signup', toSnakeCase(data));
+      return toCamelCase(response.data);
+    } catch (error: any) {
+      console.error('Signup error:', error.response?.data || error.message);
+      throw error;
+    }
   },
   
   logout: async (): Promise<void> => {
-    await apiClient.post('/auth/logout');
+    // No backend logout endpoint needed for JWT
+    return Promise.resolve();
   },
   
   refreshToken: async (): Promise<AuthResponse> => {

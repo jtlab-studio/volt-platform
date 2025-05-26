@@ -7,7 +7,7 @@ export const racesApi = {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await apiClient.post('/races/upload', formData, {
+    const response = await apiClient.post('/races', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

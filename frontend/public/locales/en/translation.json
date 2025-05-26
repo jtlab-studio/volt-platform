@@ -1,0 +1,116 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search",
+    "filter": "Filter",
+    "noData": "No data available"
+  },
+  "nav": {
+    "races": "Races",
+    "synthesis": "Smart Synth",
+    "library": "Library"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "signUp": "Sign Up",
+    "getStarted": "Get Started",
+    "loginTitle": "Welcome Back",
+    "signUpTitle": "Create Account",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "username": "Username",
+    "usernamePlaceholder": "Choose a username",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "activityType": "I'm a",
+    "optional": "Optional",
+    "hiker": "Hiker",
+    "cyclist": "Cyclist",
+    "runner": "Runner"
+  },
+  "race": {
+    "uploadGpx": "Upload GPX File",
+    "dropFile": "Drop file here",
+    "dragDropOrClick": "Drag & drop or click to browse",
+    "maxFileSize": "Maximum file size: 50MB",
+    "uploading": "Uploading...",
+    "myLibrary": "My Library",
+    "noRaces": "No races uploaded yet",
+    "viewOverview": "View",
+    "generateSimilar": "Generate",
+    "totalDistance": "Total Distance",
+    "elevationGain": "Elevation Gain",
+    "elevationLoss": "Elevation Loss",
+    "itraEffortDistance": "ITRA Effort",
+    "rollingWindowSize": "Rolling Window Size",
+    "elevationProfile": "Elevation Profile",
+    "smoothedWindow": "Smoothed with {{size}}m window",
+    "gradient": "Gradient",
+    "percentage": "Percentage of Route",
+    "ascent": "Ascent",
+    "descent": "Descent",
+    "ascentDistribution": "Ascent Gradient Distribution",
+    "descentDistribution": "Descent Gradient Distribution",
+    "distance": "Distance",
+    "elevation": "Elevation"
+  },
+  "synthesis": {
+    "drawRectangle": "Draw a rectangle on the map",
+    "controls": "Synthesis Controls",
+    "referenceRace": "Reference Race",
+    "selectRace": "Select a race",
+    "rollingWindow": "Rolling Window",
+    "maxResults": "Maximum Results",
+    "startSynthesis": "Start Synthesis",
+    "results": "Results",
+    "noResults": "No results found",
+    "similarity": "Similarity",
+    "view": "View",
+    "routeDetail": "Route Details",
+    "downloadGpx": "Download GPX",
+    "saveToLibrary": "Save to Library"
+  },
+  "footer": {
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  },
+  "landing": {
+    "hero": {
+      "title": "Train Like You Race",
+      "subtitle": "Find local routes that match your target race profile",
+      "cta": "Get Started"
+    },
+    "features": {
+      "title": "Built for Athletes",
+      "analyze": {
+        "title": "Analyze Any Race",
+        "description": "Upload GPX files to instantly see elevation profiles and gradient distributions"
+      },
+      "generate": {
+        "title": "Generate Similar Routes",
+        "description": "Our AI finds local routes matching your race's terrain characteristics"
+      },
+      "train": {
+        "title": "Train Effectively",
+        "description": "Practice on terrain that mirrors your target race conditions"
+      }
+    }
+  }
+}

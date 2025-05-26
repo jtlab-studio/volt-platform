@@ -19,7 +19,6 @@ pub async fn create_pool(settings: &Settings) -> Result<SqlitePool, ApiError> {
     let pool = SqlitePoolOptions::new()
         .max_connections(settings.database_max_connections)
         .min_connections(1)
-        .connect_timeout(Duration::from_secs(5))
         .acquire_timeout(Duration::from_secs(5))
         .idle_timeout(Duration::from_secs(60))
         .connect_with(connect_options)

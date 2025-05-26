@@ -3,18 +3,19 @@ use axum::{
     Extension,
 };
 use sqlx::SqlitePool;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::{CorsLayer, Any};
 use tower_http::trace::TraceLayer;
 
 use crate::config::settings::Settings;
 use crate::api::routes;
 
 pub fn create_app(db_pool: SqlitePool, settings: Settings) -> Router {
-    // CORS configuration
+    // CORS configuration - allow all origins in development
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
-        .allow_headers(Any);
+        .allow_headers(Any)
+        .expose_headers(Any);
     
     // Create router
     Router::new()

@@ -2,37 +2,119 @@ use crate::core::models::race::{GpxData, GpxPoint};
 use crate::errors::handlers::ApiError;
 
 pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
-    // Simple placeholder implementation
-    // In production, use a proper GPX parsing library
+    println!("=== PARSING GPX - START ===");
+    println!("GPX content length: {} bytes", gpx_content.len());
+    println!("First 200 chars: {}", &gpx_content[..gpx_content.len().min(200)]);
     
-    // For now, return sample data
-    let points = vec![
-        GpxPoint {
-            lat: 46.5197,
-            lon: 6.6323,
-            ele: 372.0,
-            time: None,
+    // Try to parse as GPX using the gpx crate
+    match gpx::read(gpx_content.as_bytes()) {
+        Ok(gpx) => {
+            println!("GPX parsed successfully!");
+            let mut points = Vec::new();
+            
+            // Extract points from all tracks and segments
+            for (track_idx, track) in gpx.tracks.iter().enumerate() {
+                println!("Processing track {}: {} segments", track_idx, track.segments.len());
+                for (seg_idx, segment) in track.segments.iter().enumerate() {
+                    println!("  Segment {}: {} points", seg_idx, segment.points.len());
+                    for point in &segment.points {
+                        points.push(GpxPoint {
+                            lat: point.point().y(),
+                            lon: point.point().x(),
+                            ele: point.elevation.unwrap_or(0.0),
+                            time: point.time.map(|t| t.format().to_string()),
+                        });
+                    }
+                }
+            }
+            
+            // If no tracks, try waypoints
+            if points.is_empty() {
+                println!("No track points found, checking waypoints...");
+                for waypoint in &gpx.waypoints {
+                    points.push(GpxPoint {
+                        lat: waypoint.point().y(),
+                        lon: waypoint.point().x(),
+                        ele: waypoint.elevation.unwrap_or(0.0),
+                        time: waypoint.time.map(|t| t.format().to_string()),
+                    });
+                }
+            }
+            
+            println!("Total points extracted: {}", points.len());
+            if points.len() > 0 {
+                println!("First point: lat={}, lon={}, ele={}", points[0].lat, points[0].lon, points[0].ele);
+                println!("Last point: lat={}, lon={}, ele={}", points.last().unwrap().lat, points.last().unwrap().lon, points.last().unwrap().ele);
+            }
+            
+            if points.is_empty() {
+                return Err(ApiError::BadRequest("No track points found in GPX file".to_string()));
+            }
+            
+            println!("=== PARSING GPX - SUCCESS ===");
+            Ok(GpxData { points })
         },
-        GpxPoint {
-            lat: 46.5200,
-            lon: 6.6325,
-            ele: 375.0,
-            time: None,
-        },
-        GpxPoint {
-            lat: 46.5203,
-            lon: 6.6328,
-            ele: 378.0,
-            time: None,
-        },
-    ];
-    
-    Ok(GpxData { points })
+        Err(e) => {
+            println!("GPX parsing failed: {:?}", e);
+            
+            // Fallback: try to parse manually for common GPX formats
+            println!("Attempting manual GPX parsing...");
+            
+            let mut points = Vec::new();
+            
+            // Simple regex-based parsing for track points
+            let trkpt_regex = regex::Regex::new(r#"<trkpt\s+lat="([^"]+)"\s+lon="([^"]+)"[^>]*>(?:\s*<ele>([^<]+)</ele>)?[^<]*</trkpt>"#).unwrap();
+            
+            for cap in trkpt_regex.captures_iter(gpx_content) {
+                if let (Some(lat), Some(lon)) = (cap.get(1), cap.get(2)) {
+                    let lat_val: f64 = lat.as_str().parse().unwrap_or(0.0);
+                    let lon_val: f64 = lon.as_str().parse().unwrap_or(0.0);
+                    let ele_val: f64 = cap.get(3).map(|e| e.as_str().parse().unwrap_or(0.0)).unwrap_or(0.0);
+                    
+                    points.push(GpxPoint {
+                        lat: lat_val,
+                        lon: lon_val,
+                        ele: ele_val,
+                        time: None,
+                    });
+                }
+            }
+            
+            if points.is_empty() {
+                // Try waypoints
+                let wpt_regex = regex::Regex::new(r#"<wpt\s+lat="([^"]+)"\s+lon="([^"]+)"[^>]*>(?:\s*<ele>([^<]+)</ele>)?[^<]*</wpt>"#).unwrap();
+                
+                for cap in wpt_regex.captures_iter(gpx_content) {
+                    if let (Some(lat), Some(lon)) = (cap.get(1), cap.get(2)) {
+                        let lat_val: f64 = lat.as_str().parse().unwrap_or(0.0);
+                        let lon_val: f64 = lon.as_str().parse().unwrap_or(0.0);
+                        let ele_val: f64 = cap.get(3).map(|e| e.as_str().parse().unwrap_or(0.0)).unwrap_or(0.0);
+                        
+                        points.push(GpxPoint {
+                            lat: lat_val,
+                            lon: lon_val,
+                            ele: ele_val,
+                            time: None,
+                        });
+                    }
+                }
+            }
+            
+            println!("Manual parsing found {} points", points.len());
+            
+            if points.is_empty() {
+                Err(ApiError::BadRequest(format!("Failed to parse GPX file: {}", e)))
+            } else {
+                println!("=== MANUAL PARSING GPX - SUCCESS ===");
+                Ok(GpxData { points })
+            }
+        }
+    }
 }
 
 pub fn gpx_to_string(gpx_data: &GpxData) -> String {
     let mut gpx = String::from(r#"<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Volt Platform">
+<gpx version="1.1" creator="Volt Platform" xmlns="http://www.topografix.com/GPX/1/1">
   <trk>
     <name>Generated Route</name>
     <trkseg>

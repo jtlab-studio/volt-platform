@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import React, { useState, useCallback } from 'react';
+import { MapContainer, TileLayer, Rectangle, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet-draw';
-import 'leaflet-draw/dist/leaflet.draw.css';
+import 'leaflet/dist/leaflet.css';
 import { useTranslation } from 'react-i18next';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
 import type { BoundingBox } from '../../../core/types/synthesis';
@@ -19,60 +18,46 @@ interface MapSelectorProps {
   onBoundsSelect: (bounds: BoundingBox) => void;
 }
 
-const DrawControl: React.FC<{ onBoundsSelect: (bounds: BoundingBox) => void }> = ({
-  onBoundsSelect,
-}) => {
-  const map = useMap();
-  const drawnItemsRef = useRef<L.FeatureGroup>(new L.FeatureGroup());
-  
-  useEffect(() => {
-    map.addLayer(drawnItemsRef.current);
-    
-    const drawControl = new (L.Control as any).Draw({
-      position: 'topright',
-      draw: {
-        rectangle: {
-          shapeOptions: {
-            color: '#ff9800',
-            weight: 2,
-            opacity: 0.8,
-            fillOpacity: 0.2,
-          },
-        },
-        polygon: false,
-        circle: false,
-        circlemarker: false,
-        marker: false,
-        polyline: false,
-      },
-      edit: {
-        featureGroup: drawnItemsRef.current,
-        edit: false,
-        remove: true,
-      },
-    });
-    
-    map.addControl(drawControl);
-    
-    map.on(L.Draw.Event.CREATED, (e: any) => {
-      const layer = e.layer;
-      drawnItemsRef.current.clearLayers();
-      drawnItemsRef.current.addLayer(layer);
+const MapClickHandler: React.FC<{
+  onBoundsSelect: (bounds: BoundingBox) => void;
+  firstCorner: [number, number] | null;
+  setFirstCorner: (corner: [number, number] | null) => void;
+  bounds: [[number, number], [number, number]] | null;
+  setBounds: (bounds: [[number, number], [number, number]] | null) => void;
+}> = ({ onBoundsSelect, firstCorner, setFirstCorner, bounds, setBounds }) => {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
       
-      const bounds = layer.getBounds();
-      onBoundsSelect({
-        north: bounds.getNorth(),
-        south: bounds.getSouth(),
-        east: bounds.getEast(),
-        west: bounds.getWest(),
-      });
-    });
-    
-    return () => {
-      map.removeControl(drawControl);
-      map.removeLayer(drawnItemsRef.current);
-    };
-  }, [map, onBoundsSelect]);
+      if (!firstCorner) {
+        // First click - set first corner
+        setFirstCorner([lat, lng]);
+        setBounds(null);
+      } else {
+        // Second click - create rectangle
+        const newBounds: [[number, number], [number, number]] = [
+          firstCorner,
+          [lat, lng]
+        ];
+        setBounds(newBounds);
+        
+        // Calculate bounding box
+        const north = Math.max(firstCorner[0], lat);
+        const south = Math.min(firstCorner[0], lat);
+        const east = Math.max(firstCorner[1], lng);
+        const west = Math.min(firstCorner[1], lng);
+        
+        onBoundsSelect({ north, south, east, west });
+        setFirstCorner(null);
+      }
+    },
+    contextmenu: (e) => {
+      // Right click - reset
+      e.originalEvent.preventDefault();
+      setFirstCorner(null);
+      setBounds(null);
+    }
+  });
   
   return null;
 };
@@ -83,29 +68,76 @@ export const MapSelector: React.FC<MapSelectorProps> = ({
   const { t } = useTranslation();
   const [mapCenter] = useState<[number, number]>([46.8182, 8.2275]); // Switzerland center
   const [mapZoom] = useState(8);
+  const [firstCorner, setFirstCorner] = useState<[number, number] | null>(null);
+  const [bounds, setBounds] = useState<[[number, number], [number, number]] | null>(null);
   
   return (
-    <GlassPanel padding="none" className="h-[500px] relative">
-      <div className="absolute top-4 left-4 z-[1000]">
+    <div className="relative h-[500px] w-full">
+      <div className="absolute top-4 right-4 z-[1000]">
         <GlassPanel className="px-3 py-2">
-          <p className="text-sm font-medium text-[#121212] dark:text-[#f1f4f8]">
-            {t('synthesis.drawRectangle')}
-          </p>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-[#121212] dark:text-[#f1f4f8]">
+              {t('synthesis.drawRectangle')}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {firstCorner 
+                ? t('synthesis.clickSecondCorner')
+                : t('synthesis.clickFirstCorner')
+              }
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {t('synthesis.rightClickReset')}
+            </p>
+          </div>
         </GlassPanel>
       </div>
       
-      <MapContainer
-        center={mapCenter}
-        zoom={mapZoom}
-        className="h-full w-full rounded-2xl"
-        style={{ zIndex: 0 }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <DrawControl onBoundsSelect={onBoundsSelect} />
-      </MapContainer>
-    </GlassPanel>
+      <div className="h-full w-full rounded-2xl overflow-hidden">
+        <MapContainer
+          center={mapCenter}
+          zoom={mapZoom}
+          className="h-full w-full"
+          style={{ zIndex: 0 }}
+          scrollWheelZoom={true}
+          doubleClickZoom={false}
+          dragging={true}
+          zoomControl={true}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <MapClickHandler
+            onBoundsSelect={onBoundsSelect}
+            firstCorner={firstCorner}
+            setFirstCorner={setFirstCorner}
+            bounds={bounds}
+            setBounds={setBounds}
+          />
+          {bounds && (
+            <Rectangle
+              bounds={bounds}
+              pathOptions={{
+                color: '#ff9800',
+                weight: 2,
+                opacity: 0.8,
+                fillOpacity: 0.2,
+              }}
+            />
+          )}
+          {firstCorner && !bounds && (
+            <Rectangle
+              bounds={[firstCorner, firstCorner]}
+              pathOptions={{
+                color: '#ff9800',
+                weight: 2,
+                opacity: 0.5,
+                fillOpacity: 0.1,
+              }}
+            />
+          )}
+        </MapContainer>
+      </div>
+    </div>
   );
 };

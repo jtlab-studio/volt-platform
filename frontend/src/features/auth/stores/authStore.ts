@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { env } from '../../../core/config/environment';
+import { authApi } from '../../auth/api/auth';
 
 interface User {
   id: string;
@@ -22,39 +22,7 @@ interface AuthState {
   clearError: () => void;
 }
 
-// For development without Supabase
-const mockAuth = {
-  login: async (email: string, password: string): Promise<{ user: User; token: string } | null> => {
-    // Mock authentication - accept any email/password in dev
-    if (email && password) {
-      return {
-        user: {
-          id: 'dev-user-1',
-          email,
-          username: email.split('@')[0],
-        },
-        token: 'dev-token-123',
-      };
-    }
-    return null;
-  },
-  
-  signup: async (email: string, username: string, password: string): Promise<{ user: User; token: string } | null> => {
-    if (email && username && password) {
-      return {
-        user: {
-          id: 'dev-user-1',
-          email,
-          username,
-        },
-        token: 'dev-token-123',
-      };
-    }
-    return null;
-  },
-};
-
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
   isLoading: true,
@@ -65,20 +33,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true, error: null });
     
     try {
-      // Use mock auth in development
-      const result = await mockAuth.login(email, password);
+      const response = await authApi.login({ email, password });
       
-      if (result) {
-        set({
-          user: result.user,
-          token: result.token,
-          loading: false,
-          error: null,
-        });
-        return true;
-      }
+      set({
+        user: response.user,
+        token: response.token,
+        loading: false,
+        error: null,
+      });
       
-      throw new Error('Invalid credentials');
+      // Store token in memory only (as per requirements)
+      // The API client will access it from the store
+      
+      return true;
     } catch (error: any) {
       set({
         loading: false,
@@ -92,20 +59,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true, error: null });
     
     try {
-      // Use mock auth in development
-      const result = await mockAuth.signup(email, username, password);
+      const response = await authApi.signup({ email, username, password });
       
-      if (result) {
-        set({
-          user: result.user,
-          token: result.token,
-          loading: false,
-          error: null,
-        });
-        return true;
-      }
+      set({
+        user: response.user,
+        token: response.token,
+        loading: false,
+        error: null,
+      });
       
-      throw new Error('Signup failed');
+      return true;
     } catch (error: any) {
       set({
         loading: false,
@@ -119,7 +82,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true });
     
     try {
-      // Simple logout for development
+      // Clear local state
       set({
         user: null,
         token: null,
@@ -138,13 +101,21 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true });
     
     try {
-      // Check if we have a stored session (in a real app, this would check localStorage/cookies)
-      // For now, just set as not authenticated
-      set({
-        user: null,
-        token: null,
-        isLoading: false,
-      });
+      // Check if we have a token in the current state
+      const currentToken = get().token;
+      
+      if (!currentToken) {
+        set({
+          user: null,
+          token: null,
+          isLoading: false,
+        });
+        return;
+      }
+      
+      // In a real app, you might validate the token here
+      // For now, just keep the existing state
+      set({ isLoading: false });
     } catch (error) {
       set({
         user: null,
@@ -156,14 +127,3 @@ export const useAuthStore = create<AuthState>((set) => ({
   
   clearError: () => set({ error: null }),
 }));
-
-// Note: When ready to integrate Supabase, uncomment the following:
-/*
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = env.supabaseUrl && env.supabaseAnonKey 
-  ? createClient(env.supabaseUrl, env.supabaseAnonKey)
-  : null;
-
-// Then replace mock auth with real Supabase auth
-*/

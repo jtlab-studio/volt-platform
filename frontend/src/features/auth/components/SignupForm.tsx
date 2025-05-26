@@ -15,7 +15,7 @@ const signupSchema = z.object({
   username: usernameSchema,
   password: passwordSchema,
   confirmPassword: z.string(),
-  activityType: z.enum(['hiker', 'cyclist', 'runner']).optional(),
+  activityType: z.enum(['hiker', 'cyclist', 'runner']).optional().nullable(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -34,6 +34,9 @@ export const SignupForm: React.FC = () => {
     formState: { errors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      activityType: null,
+    }
   });
   
   const onSubmit = async (data: SignupFormData) => {
@@ -137,6 +140,18 @@ export const SignupForm: React.FC = () => {
             {t('auth.activityType')} ({t('auth.optional')})
           </label>
           <div className="space-y-2">
+            <label className="flex items-center">
+              <input
+                {...register('activityType')}
+                type="radio"
+                value=""
+                className="mr-2 text-[#ff9800] focus:ring-[#ff9800]"
+                defaultChecked
+              />
+              <span className="text-sm text-[#14181b] dark:text-[#ffffff]">
+                {t('common.noData')}
+              </span>
+            </label>
             {(['hiker', 'cyclist', 'runner'] as const).map((type) => (
               <label key={type} className="flex items-center">
                 <input

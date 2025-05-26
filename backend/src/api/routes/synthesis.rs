@@ -48,7 +48,7 @@ async fn generate_routes(
     Json(payload): Json<SynthesisRequest>,
 ) -> Result<Json<serde_json::Value>, ApiError> {
     // Verify user owns the reference race
-    let race = sqlx::query!(
+    let _race = sqlx::query!(
         r#"SELECT id FROM races WHERE id = ? AND user_id = ?"#,
         payload.reference_race_id,
         user_id
@@ -85,7 +85,7 @@ async fn generate_routes(
         "user_id": user_id,
         "reference_race_id": payload.reference_race_id,
         "results": [],
-        "created_at": chrono::Utc::now()
+        "created_at": chrono::Utc::now().to_rfc3339()
     })))
 }
 
@@ -113,9 +113,9 @@ async fn get_synthesis_results(
 }
 
 async fn download_gpx(
-    Extension(user_id): Extension<String>,
-    Path((synthesis_id, result_id)): Path<(String, String)>,
-    State((db_pool, _)): State<(SqlitePool, Settings)>,
+    Extension(_user_id): Extension<String>,
+    Path((_synthesis_id, _result_id)): Path<(String, String)>,
+    State((_db_pool, _)): State<(SqlitePool, Settings)>,
 ) -> Result<String, ApiError> {
     // Verify access and generate GPX
     // For now, return placeholder
@@ -123,10 +123,10 @@ async fn download_gpx(
 }
 
 async fn save_to_library(
-    Extension(user_id): Extension<String>,
-    Path((synthesis_id, result_id)): Path<(String, String)>,
-    State((db_pool, _)): State<(SqlitePool, Settings)>,
-    Json(payload): Json<serde_json::Value>,
+    Extension(_user_id): Extension<String>,
+    Path((_synthesis_id, _result_id)): Path<(String, String)>,
+    State((_db_pool, _)): State<(SqlitePool, Settings)>,
+    Json(_payload): Json<serde_json::Value>,
 ) -> Result<(), ApiError> {
     // Save synthesized route as a new race
     // Implementation would extract route from synthesis results

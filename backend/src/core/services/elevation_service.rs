@@ -1,6 +1,10 @@
 use crate::core::models::race::{GpxData, GpxPoint, ElevationProfile, GradientDistribution, GradientBin};
+use crate::core::algorithms::gradient_analysis::{analyze_gradients, categorize_gradients};
 
 pub fn calculate_elevation_metrics(gpx_data: &GpxData) -> (f64, f64, f64) {
+    println!("=== CALCULATING ELEVATION METRICS ===");
+    println!("Number of points: {}", gpx_data.points.len());
+    
     let mut distance = 0.0;
     let mut elevation_gain = 0.0;
     let mut elevation_loss = 0.0;
@@ -10,7 +14,8 @@ pub fn calculate_elevation_metrics(gpx_data: &GpxData) -> (f64, f64, f64) {
         let curr = &gpx_data.points[i];
         
         // Calculate distance
-        distance += haversine_distance(prev.lat, prev.lon, curr.lat, curr.lon);
+        let segment_distance = haversine_distance(prev.lat, prev.lon, curr.lat, curr.lon);
+        distance += segment_distance;
         
         // Calculate elevation change
         let ele_diff = curr.ele - prev.ele;
@@ -19,12 +24,24 @@ pub fn calculate_elevation_metrics(gpx_data: &GpxData) -> (f64, f64, f64) {
         } else {
             elevation_loss += ele_diff.abs();
         }
+        
+        if i <= 5 || i >= gpx_data.points.len() - 5 {
+            println!("Point {}: dist_segment={:.3}km, ele_diff={:.1}m", i, segment_distance, ele_diff);
+        }
     }
+    
+    println!("TOTAL DISTANCE: {:.2} km", distance);
+    println!("TOTAL ELEVATION GAIN: {:.0} m", elevation_gain);
+    println!("TOTAL ELEVATION LOSS: {:.0} m", elevation_loss);
+    println!("=== ELEVATION METRICS COMPLETE ===");
     
     (distance, elevation_gain, elevation_loss)
 }
 
 pub fn calculate_elevation_profile(gpx_data: &GpxData, window_size: u32) -> ElevationProfile {
+    println!("=== CALCULATING ELEVATION PROFILE ===");
+    println!("Window size: {}", window_size);
+    
     let mut distances = vec![0.0];
     let mut elevations = vec![gpx_data.points[0].ele];
     let mut cumulative_distance = 0.0;
@@ -33,10 +50,18 @@ pub fn calculate_elevation_profile(gpx_data: &GpxData, window_size: u32) -> Elev
         let prev = &gpx_data.points[i - 1];
         let curr = &gpx_data.points[i];
         
-        cumulative_distance += haversine_distance(prev.lat, prev.lon, curr.lat, curr.lon);
+        let segment_distance = haversine_distance(prev.lat, prev.lon, curr.lat, curr.lon);
+        cumulative_distance += segment_distance;
         distances.push(cumulative_distance);
         elevations.push(curr.ele);
     }
+    
+    println!("Profile has {} points", distances.len());
+    println!("Distance range: 0.0 to {:.2} km", cumulative_distance);
+    println!("Elevation range: {:.0} to {:.0} m", 
+        elevations.iter().cloned().fold(f64::INFINITY, f64::min),
+        elevations.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
+    );
     
     // Apply smoothing if window_size > 0
     let smoothed_elevations = if window_size > 0 {
@@ -44,6 +69,8 @@ pub fn calculate_elevation_profile(gpx_data: &GpxData, window_size: u32) -> Elev
     } else {
         elevations.clone()
     };
+    
+    println!("=== ELEVATION PROFILE COMPLETE ===");
     
     ElevationProfile {
         distance: distances,
@@ -57,24 +84,45 @@ pub fn calculate_gradient_distribution(
     gpx_data: &GpxData,
     window_size: u32,
 ) -> GradientDistribution {
-    // Placeholder implementation
-    let gradient_ranges = vec!["0-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30+"];
+    println!("=== CALCULATING GRADIENT DISTRIBUTION ===");
     
-    let ascent_bins: Vec<GradientBin> = gradient_ranges
-        .iter()
-        .map(|range| GradientBin {
-            range: range.to_string(),
-            percentage: 100.0 / gradient_ranges.len() as f64,
-            distance: 5.0,
+    // Use the gradient analysis algorithm
+    let segments = analyze_gradients(gpx_data, window_size as f64);
+    println!("Analyzed {} gradient segments", segments.len());
+    
+    let (ascent_bins, descent_bins) = categorize_gradients(&segments);
+    
+    let total_distance = calculate_elevation_metrics(gpx_data).0;
+    
+    let ascent: Vec<GradientBin> = ascent_bins.into_iter()
+        .map(|(range, percentage)| {
+            let distance = (percentage / 100.0) * total_distance;
+            println!("Ascent bin {}: {:.1}% ({:.2}km)", range, percentage, distance);
+            
+            GradientBin {
+                range,
+                percentage,
+                distance,
+            }
         })
         .collect();
     
-    let descent_bins = ascent_bins.clone();
+    let descent: Vec<GradientBin> = descent_bins.into_iter()
+        .map(|(range, percentage)| {
+            let distance = (percentage / 100.0) * total_distance;
+            println!("Descent bin {}: {:.1}% ({:.2}km)", range, percentage, distance);
+            
+            GradientBin {
+                range,
+                percentage,
+                distance,
+            }
+        })
+        .collect();
     
-    GradientDistribution {
-        ascent: ascent_bins,
-        descent: descent_bins,
-    }
+    println!("=== GRADIENT DISTRIBUTION COMPLETE ===");
+    
+    GradientDistribution { ascent, descent }
 }
 
 fn smooth_elevations(elevations: &[f64], window_size: usize) -> Vec<f64> {

@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Extension, Path, Query, State},
+    extract::{Extension, Path, Query, State, Multipart},
     middleware,
     routing::{get, post, delete},
     Json,
@@ -11,9 +11,13 @@ use uuid::Uuid;
 
 use crate::api::middleware::auth::auth_middleware;
 use crate::config::settings::Settings;
-use crate::core::models::race::Race;
+use crate::core::models::race::{Race, ElevationProfile, GradientDistribution};
 use crate::core::services::gpx_parser::parse_gpx;
-use crate::core::services::elevation_service::calculate_elevation_metrics;
+use crate::core::services::elevation_service::{
+    calculate_elevation_metrics, 
+    calculate_elevation_profile, 
+    calculate_gradient_distribution
+};
 use crate::core::services::itra_calculator::calculate_itra_effort;
 use crate::errors::handlers::ApiError;
 
@@ -39,14 +43,36 @@ async fn get_races(
     Extension(user_id): Extension<String>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
 ) -> Result<Json<Vec<Race>>, ApiError> {
-    let races = sqlx::query_as!(
-        Race,
-        r#"SELECT * FROM races WHERE user_id = ? ORDER BY created_at DESC"#,
+    println!("Getting races for user: {}", user_id);
+    
+    let rows = sqlx::query!(
+        r#"
+        SELECT 
+            id, user_id, name, gpx_data,
+            distance_km, elevation_gain_m, elevation_loss_m,
+            itra_effort_distance, created_at
+        FROM races 
+        WHERE user_id = ? 
+        ORDER BY created_at DESC
+        "#,
         user_id
     )
     .fetch_all(&db_pool)
     .await?;
     
+    let races: Vec<Race> = rows.into_iter().map(|row| Race {
+        id: row.id,
+        user_id: row.user_id,
+        name: row.name,
+        gpx_data: row.gpx_data,
+        distance_km: row.distance_km,
+        elevation_gain_m: row.elevation_gain_m,
+        elevation_loss_m: row.elevation_loss_m,
+        itra_effort_distance: row.itra_effort_distance,
+        created_at: row.created_at,
+    }).collect();
+    
+    println!("Found {} races", races.len());
     Ok(Json(races))
 }
 
@@ -55,9 +81,15 @@ async fn get_race(
     Path(id): Path<String>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
 ) -> Result<Json<Race>, ApiError> {
-    let race = sqlx::query_as!(
-        Race,
-        r#"SELECT * FROM races WHERE id = ? AND user_id = ?"#,
+    let row = sqlx::query!(
+        r#"
+        SELECT 
+            id, user_id, name, gpx_data,
+            distance_km, elevation_gain_m, elevation_loss_m,
+            itra_effort_distance, created_at
+        FROM races 
+        WHERE id = ? AND user_id = ?
+        "#,
         id,
         user_id
     )
@@ -65,16 +97,65 @@ async fn get_race(
     .await?
     .ok_or_else(|| ApiError::NotFound("Race not found".to_string()))?;
     
+    let race = Race {
+        id: row.id,
+        user_id: row.user_id,
+        name: row.name,
+        gpx_data: row.gpx_data,
+        distance_km: row.distance_km,
+        elevation_gain_m: row.elevation_gain_m,
+        elevation_loss_m: row.elevation_loss_m,
+        itra_effort_distance: row.itra_effort_distance,
+        created_at: row.created_at,
+    };
+    
     Ok(Json(race))
 }
 
 async fn upload_gpx(
     Extension(user_id): Extension<String>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
-    body: String, // In real implementation, use multipart form
+    mut multipart: Multipart,
 ) -> Result<Json<Race>, ApiError> {
+    println!("Uploading GPX for user: {}", user_id);
+    
+    let mut gpx_content = String::new();
+    let mut filename = String::new();
+    
+    // Process multipart form
+    while let Some(field) = multipart.next_field().await
+        .map_err(|e| {
+            println!("Multipart error: {:?}", e);
+            ApiError::BadRequest("Invalid multipart data".to_string())
+        })?
+    {
+        let name = field.name().unwrap_or("").to_string();
+        println!("Processing field: {}", name);
+        
+        if name == "file" {
+            filename = field.file_name().unwrap_or("unnamed.gpx").to_string();
+            let data = field.bytes().await
+                .map_err(|e| {
+                    println!("Failed to read file: {:?}", e);
+                    ApiError::BadRequest("Failed to read file".to_string())
+                })?;
+            
+            gpx_content = String::from_utf8(data.to_vec())
+                .map_err(|e| {
+                    println!("Invalid UTF-8: {:?}", e);
+                    ApiError::BadRequest("Invalid UTF-8 in GPX file".to_string())
+                })?;
+            
+            println!("GPX content length: {}", gpx_content.len());
+        }
+    }
+    
+    if gpx_content.is_empty() {
+        return Err(ApiError::BadRequest("No GPX file provided".to_string()));
+    }
+    
     // Parse GPX file
-    let gpx_data = parse_gpx(&body)?;
+    let gpx_data = parse_gpx(&gpx_content)?;
     
     // Calculate metrics
     let (distance_km, elevation_gain_m, elevation_loss_m) = calculate_elevation_metrics(&gpx_data);
@@ -82,8 +163,14 @@ async fn upload_gpx(
     
     // Create race
     let race_id = Uuid::new_v4().to_string();
-    let race_name = format!("Race {}", chrono::Utc::now().format("%Y-%m-%d"));
+    let race_name = if !filename.is_empty() && filename != "unnamed.gpx" {
+        filename.replace(".gpx", "")
+    } else {
+        format!("Race {}", chrono::Utc::now().format("%Y-%m-%d %H:%M"))
+    };
     let gpx_json = serde_json::to_string(&gpx_data)?;
+    
+    println!("Creating race: {} with distance: {}km", race_name, distance_km);
     
     sqlx::query!(
         r#"
@@ -106,14 +193,33 @@ async fn upload_gpx(
     .await?;
     
     // Fetch and return the created race
-    let race = sqlx::query_as!(
-        Race,
-        r#"SELECT * FROM races WHERE id = ?"#,
+    let row = sqlx::query!(
+        r#"
+        SELECT 
+            id, user_id, name, gpx_data,
+            distance_km, elevation_gain_m, elevation_loss_m,
+            itra_effort_distance, created_at
+        FROM races 
+        WHERE id = ?
+        "#,
         race_id
     )
     .fetch_one(&db_pool)
     .await?;
     
+    let race = Race {
+        id: row.id,
+        user_id: row.user_id,
+        name: row.name,
+        gpx_data: row.gpx_data,
+        distance_km: row.distance_km,
+        elevation_gain_m: row.elevation_gain_m,
+        elevation_loss_m: row.elevation_loss_m,
+        itra_effort_distance: row.itra_effort_distance,
+        created_at: row.created_at,
+    };
+    
+    println!("Race created successfully: {}", race.id);
     Ok(Json(race))
 }
 
@@ -122,6 +228,8 @@ async fn delete_race(
     Path(id): Path<String>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
 ) -> Result<StatusCode, ApiError> {
+    println!("Deleting race {} for user {}", id, user_id);
+    
     let result = sqlx::query!(
         r#"DELETE FROM races WHERE id = ? AND user_id = ?"#,
         id,
@@ -134,6 +242,7 @@ async fn delete_race(
         return Err(ApiError::NotFound("Race not found".to_string()));
     }
     
+    println!("Race deleted successfully");
     Ok(StatusCode::NO_CONTENT)
 }
 
@@ -142,15 +251,24 @@ async fn get_elevation_profile(
     Path(id): Path<String>,
     Query(params): Query<WindowSizeQuery>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
-) -> Result<Json<serde_json::Value>, ApiError> {
-    // Implementation would calculate elevation profile with smoothing
-    // For now, return placeholder
-    Ok(Json(serde_json::json!({
-        "distance": [0.0, 1.0, 2.0],
-        "elevation": [100.0, 150.0, 120.0],
-        "smoothed": true,
-        "windowSize": params.window_size.unwrap_or(100)
-    })))
+) -> Result<Json<ElevationProfile>, ApiError> {
+    // Get the race data
+    let row = sqlx::query!(
+        r#"SELECT gpx_data FROM races WHERE id = ? AND user_id = ?"#,
+        id,
+        user_id
+    )
+    .fetch_optional(&db_pool)
+    .await?
+    .ok_or_else(|| ApiError::NotFound("Race not found".to_string()))?;
+    
+    // Parse GPX data
+    let gpx_data: crate::core::models::race::GpxData = serde_json::from_str(&row.gpx_data)?;
+    
+    // Calculate elevation profile
+    let profile = calculate_elevation_profile(&gpx_data, params.window_size.unwrap_or(100));
+    
+    Ok(Json(profile))
 }
 
 async fn get_gradient_distribution(
@@ -158,23 +276,24 @@ async fn get_gradient_distribution(
     Path(id): Path<String>,
     Query(params): Query<WindowSizeQuery>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
-) -> Result<Json<serde_json::Value>, ApiError> {
-    // Implementation would calculate gradient distribution
-    // For now, return placeholder
-    Ok(Json(serde_json::json!({
-        "ascent": [
-            {"range": "0-5", "percentage": 30.0, "distance": 10.0},
-            {"range": "5-10", "percentage": 40.0, "distance": 13.3},
-            {"range": "10-15", "percentage": 20.0, "distance": 6.7},
-            {"range": "15+", "percentage": 10.0, "distance": 3.3}
-        ],
-        "descent": [
-            {"range": "0-5", "percentage": 35.0, "distance": 11.7},
-            {"range": "5-10", "percentage": 45.0, "distance": 15.0},
-            {"range": "10-15", "percentage": 15.0, "distance": 5.0},
-            {"range": "15+", "percentage": 5.0, "distance": 1.7}
-        ]
-    })))
+) -> Result<Json<GradientDistribution>, ApiError> {
+    // Get the race data
+    let row = sqlx::query!(
+        r#"SELECT gpx_data FROM races WHERE id = ? AND user_id = ?"#,
+        id,
+        user_id
+    )
+    .fetch_optional(&db_pool)
+    .await?
+    .ok_or_else(|| ApiError::NotFound("Race not found".to_string()))?;
+    
+    // Parse GPX data
+    let gpx_data: crate::core::models::race::GpxData = serde_json::from_str(&row.gpx_data)?;
+    
+    // Calculate gradient distribution
+    let distribution = calculate_gradient_distribution(&gpx_data, params.window_size.unwrap_or(100));
+    
+    Ok(Json(distribution))
 }
 
 use axum::http::StatusCode;

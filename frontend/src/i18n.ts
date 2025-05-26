@@ -18,8 +18,11 @@ i18n
     },
     
     backend: {
-      loadPath: '/src/locales/{{lng}}/translation.json',
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
+    
+    ns: ['translation'],
+    defaultNS: 'translation',
     
     detection: {
       order: ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
