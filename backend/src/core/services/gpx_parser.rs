@@ -6,8 +6,11 @@ pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
     println!("GPX content length: {} bytes", gpx_content.len());
     println!("First 200 chars: {}", &gpx_content[..gpx_content.len().min(200)]);
     
+    // Clean up the GPX content to handle extended namespaces
+    let cleaned_content = clean_gpx_content(gpx_content);
+    
     // Try to parse as GPX using the gpx crate
-    match gpx::read(gpx_content.as_bytes()) {
+    match gpx::read(cleaned_content.as_bytes()) {
         Ok(gpx) => {
             println!("GPX parsed successfully!");
             let mut points = Vec::new();
@@ -63,9 +66,9 @@ pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
             let mut points = Vec::new();
             
             // Simple regex-based parsing for track points
-            let trkpt_regex = regex::Regex::new(r#"<trkpt\s+lat="([^"]+)"\s+lon="([^"]+)"[^>]*>(?:\s*<ele>([^<]+)</ele>)?[^<]*</trkpt>"#).unwrap();
+            let trkpt_regex = regex::Regex::new(r#"(?s)<trkpt\s+lat="([^"]+)"\s+lon="([^"]+)"[^>]*>.*?(?:<ele>([^<]+)</ele>)?.*?</trkpt>"#).unwrap();
             
-            for cap in trkpt_regex.captures_iter(gpx_content) {
+            for cap in trkpt_regex.captures_iter(&cleaned_content) {
                 if let (Some(lat), Some(lon)) = (cap.get(1), cap.get(2)) {
                     let lat_val: f64 = lat.as_str().parse().unwrap_or(0.0);
                     let lon_val: f64 = lon.as_str().parse().unwrap_or(0.0);
@@ -82,9 +85,9 @@ pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
             
             if points.is_empty() {
                 // Try waypoints
-                let wpt_regex = regex::Regex::new(r#"<wpt\s+lat="([^"]+)"\s+lon="([^"]+)"[^>]*>(?:\s*<ele>([^<]+)</ele>)?[^<]*</wpt>"#).unwrap();
+                let wpt_regex = regex::Regex::new(r#"(?s)<wpt\s+lat="([^"]+)"\s+lon="([^"]+)"[^>]*>.*?(?:<ele>([^<]+)</ele>)?.*?</wpt>"#).unwrap();
                 
-                for cap in wpt_regex.captures_iter(gpx_content) {
+                for cap in wpt_regex.captures_iter(&cleaned_content) {
                     if let (Some(lat), Some(lon)) = (cap.get(1), cap.get(2)) {
                         let lat_val: f64 = lat.as_str().parse().unwrap_or(0.0);
                         let lon_val: f64 = lon.as_str().parse().unwrap_or(0.0);
@@ -110,6 +113,21 @@ pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
             }
         }
     }
+}
+
+/// Clean GPX content to handle extended namespaces
+fn clean_gpx_content(content: &str) -> String {
+    // Remove all custom namespace declarations to simplify parsing
+    let mut cleaned = content.to_string();
+    
+    // Remove namespace prefixes from tags
+    let prefixes = vec!["gpxx:", "gpxtrx:", "gpxtpx:", "wptx1:", "trp:", "adv:", "prs:", "tmd:", "vptm:", "ctx:", "gpxacc:", "gpxpx:", "vidx1:"];
+    for prefix in prefixes {
+        cleaned = cleaned.replace(&format!("<{}", prefix), "<");
+        cleaned = cleaned.replace(&format!("</{}", prefix), "</");
+    }
+    
+    cleaned
 }
 
 pub fn gpx_to_string(gpx_data: &GpxData) -> String {

@@ -11,6 +11,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { useTranslation } from 'react-i18next';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
 import { SkeletonChart } from '../../../ui/components/Skeleton';
 import type { GradientDistribution as GradientDistributionType } from '../../../core/types/race';
@@ -21,7 +22,8 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartDataLabels
 );
 
 interface GradientDistributionProps {
@@ -63,12 +65,12 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
     ],
   }), [distribution.descent, t]);
   
-  const options: ChartOptions<'bar'> = useMemo(() => ({
+  const createOptions = (data: GradientDistributionType['ascent'] | GradientDistributionType['descent']): ChartOptions<'bar'> => ({
     responsive: true,
     maintainAspectRatio: false,
     layout: {
       padding: {
-        top: 10,
+        top: 20, // Add more top padding for labels
         bottom: 0,
         left: 10,
         right: 10,
@@ -81,14 +83,25 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
       tooltip: {
         callbacks: {
           label: (context) => {
-            const distance = context.dataset === ascentData.datasets[0]
-              ? distribution.ascent[context.dataIndex].distance
-              : distribution.descent[context.dataIndex].distance;
+            const distance = data[context.dataIndex].distance;
             return [
               `${context.parsed.y.toFixed(1)}%`,
               `${distance.toFixed(1)} km`,
             ];
           },
+        },
+      },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        offset: 4,
+        color: '#666',
+        font: {
+          size: 11,
+          weight: 'bold',
+        },
+        formatter: (value: number) => {
+          return value > 5 ? `${value.toFixed(0)}%` : '';
         },
       },
     },
@@ -113,10 +126,13 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
         max: Math.max(
           Math.max(...distribution.ascent.map(d => d.percentage)),
           Math.max(...distribution.descent.map(d => d.percentage))
-        ) * 1.2,
+        ) * 1.3, // Increase max to make room for labels
       },
     },
-  }), [distribution, ascentData.datasets, t]);
+  });
+  
+  const ascentOptions = useMemo(() => createOptions(distribution.ascent), [distribution]);
+  const descentOptions = useMemo(() => createOptions(distribution.descent), [distribution]);
   
   if (isLoading) {
     return (
@@ -133,15 +149,7 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
           {t('race.ascentDistribution')}
         </h4>
         <div className="flex-1 relative">
-          <Bar data={ascentData} options={options} />
-          {/* Show percentage labels on bars */}
-          <div className="absolute inset-0 pointer-events-none flex items-end justify-around px-4 pb-8">
-            {distribution.ascent.map((bin, idx) => (
-              <div key={idx} className="text-xs font-medium text-white mix-blend-normal" style={{ width: `${100 / distribution.ascent.length}%`, textAlign: 'center' }}>
-                {bin.percentage > 5 && `${bin.percentage.toFixed(0)}%`}
-              </div>
-            ))}
-          </div>
+          <Bar data={ascentData} options={ascentOptions} />
         </div>
       </GlassPanel>
       
@@ -150,15 +158,7 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
           {t('race.descentDistribution')}
         </h4>
         <div className="flex-1 relative">
-          <Bar data={descentData} options={options} />
-          {/* Show percentage labels on bars */}
-          <div className="absolute inset-0 pointer-events-none flex items-end justify-around px-4 pb-8">
-            {distribution.descent.map((bin, idx) => (
-              <div key={idx} className="text-xs font-medium text-white mix-blend-normal" style={{ width: `${100 / distribution.descent.length}%`, textAlign: 'center' }}>
-                {bin.percentage > 5 && `${bin.percentage.toFixed(0)}%`}
-              </div>
-            ))}
-          </div>
+          <Bar data={descentData} options={descentOptions} />
         </div>
       </GlassPanel>
     </div>

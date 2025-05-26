@@ -15,7 +15,6 @@ use chrono::{Duration, Utc};
 
 use crate::api::middleware::auth::{Claims, auth_middleware};
 use crate::config::settings::Settings;
-use crate::core::models::user::User;
 use crate::errors::handlers::ApiError;
 
 #[derive(Debug, Deserialize)]

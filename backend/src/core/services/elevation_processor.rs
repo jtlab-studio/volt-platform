@@ -1,4 +1,4 @@
-use crate::core::models::race::{GpxData, GpxPoint};
+use crate::core::models::race::GpxData;
 
 #[derive(Debug, Clone)]
 pub struct ElevationData {
@@ -164,7 +164,7 @@ impl ElevationData {
         
         // Apply rolling mean smoothing only if hilliness ratio is below 20m/km
         if hilliness_ratio < 20.0 {
-            self.altitude_change = Self::rolling_mean(&self.altitude_change, 83);
+            self.altitude_change = Self::rolling_mean(&self.altitude_change, 75);
             self.calculate_gradients();
         }
     }

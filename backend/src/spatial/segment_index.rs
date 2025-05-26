@@ -1,7 +1,6 @@
 use crate::core::models::race::GpxData;
 use crate::spatial::rtree::{SpatialSegment, SpatialIndex};
 use geo::Point;
-use uuid::Uuid;
 
 pub fn build_segment_index(routes: Vec<(String, GpxData)>) -> SpatialIndex {
     let mut segments = Vec::new();

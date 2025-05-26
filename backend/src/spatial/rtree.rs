@@ -1,6 +1,5 @@
 use rstar::{RTree, RTreeObject, AABB, PointDistance};
-use geo::{Point, Coord};
-use crate::core::models::synthesis::RoutePoint;
+use geo::Point;
 
 #[derive(Clone, Debug)]
 pub struct SpatialSegment {

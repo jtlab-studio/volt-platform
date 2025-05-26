@@ -10,7 +10,6 @@ interface RollingWindowSelectorProps {
 }
 
 const WINDOW_SIZES = [
-  { value: 0, label: 'None' },
   { value: 10, label: 'XS' },
   { value: 25, label: 'S' },
   { value: 100, label: 'M' },

@@ -15,7 +15,6 @@ const signupSchema = z.object({
   username: usernameSchema,
   password: passwordSchema,
   confirmPassword: z.string(),
-  activityType: z.enum(['hiker', 'cyclist', 'runner']).optional().nullable(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -34,9 +33,6 @@ export const SignupForm: React.FC = () => {
     formState: { errors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      activityType: null,
-    }
   });
   
   const onSubmit = async (data: SignupFormData) => {
@@ -70,7 +66,7 @@ export const SignupForm: React.FC = () => {
             {...register('email')}
             type="email"
             id="email"
-            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 text-[#121212] dark:text-[#f1f4f8] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
             placeholder={t('auth.emailPlaceholder')}
           />
           {errors.email && (
@@ -89,7 +85,7 @@ export const SignupForm: React.FC = () => {
             {...register('username')}
             type="text"
             id="username"
-            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 text-[#121212] dark:text-[#f1f4f8] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
             placeholder={t('auth.usernamePlaceholder')}
           />
           {errors.username && (
@@ -108,7 +104,7 @@ export const SignupForm: React.FC = () => {
             {...register('password')}
             type="password"
             id="password"
-            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 text-[#121212] dark:text-[#f1f4f8] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
             placeholder={t('auth.passwordPlaceholder')}
           />
           {errors.password && (
@@ -127,45 +123,12 @@ export const SignupForm: React.FC = () => {
             {...register('confirmPassword')}
             type="password"
             id="confirmPassword"
-            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 text-[#121212] dark:text-[#f1f4f8] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
             placeholder={t('auth.confirmPasswordPlaceholder')}
           />
           {errors.confirmPassword && (
             <p className="mt-1 text-sm text-[#dc143c]">{errors.confirmPassword.message}</p>
           )}
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-[#14181b] dark:text-[#ffffff] mb-2">
-            {t('auth.activityType')} ({t('auth.optional')})
-          </label>
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                {...register('activityType')}
-                type="radio"
-                value=""
-                className="mr-2 text-[#ff9800] focus:ring-[#ff9800]"
-                defaultChecked
-              />
-              <span className="text-sm text-[#14181b] dark:text-[#ffffff]">
-                {t('common.noData')}
-              </span>
-            </label>
-            {(['hiker', 'cyclist', 'runner'] as const).map((type) => (
-              <label key={type} className="flex items-center">
-                <input
-                  {...register('activityType')}
-                  type="radio"
-                  value={type}
-                  className="mr-2 text-[#ff9800] focus:ring-[#ff9800]"
-                />
-                <span className="text-sm text-[#14181b] dark:text-[#ffffff]">
-                  {t(`auth.${type}`)}
-                </span>
-              </label>
-            ))}
-          </div>
         </div>
         
         <Button type="submit" fullWidth loading={loading}>

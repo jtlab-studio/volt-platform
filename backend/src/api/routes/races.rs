@@ -1,13 +1,14 @@
 use axum::{
     extract::{Extension, Path, Query, State, Multipart},
     middleware,
-    routing::{get, post, delete},
+    routing::get,
     Json,
     Router,
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use sqlx::SqlitePool;
 use uuid::Uuid;
+use axum::http::StatusCode;
 
 use crate::api::middleware::auth::auth_middleware;
 use crate::config::settings::Settings;
@@ -15,7 +16,6 @@ use crate::core::models::race::{Race, ElevationProfile, GradientDistribution};
 use crate::core::services::gpx_parser::parse_gpx;
 use crate::core::services::elevation_service::{
     calculate_elevation_metrics, 
-    calculate_elevation_profile, 
     calculate_gradient_distribution
 };
 use crate::core::services::itra_calculator::calculate_itra_effort;
@@ -33,6 +33,7 @@ pub fn routes(db_pool: SqlitePool, settings: Settings) -> Router {
         .route("/:id", get(get_race).delete(delete_race))
         .route("/:id/elevation", get(get_elevation_profile))
         .route("/:id/gradient", get(get_gradient_distribution))
+        .route("/:id/metrics", get(get_race_metrics))
         .layer(middleware::from_fn_with_state(
             settings.clone(),
             auth_middleware,
@@ -253,6 +254,11 @@ async fn get_elevation_profile(
     Query(params): Query<WindowSizeQuery>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
 ) -> Result<Json<ElevationProfile>, ApiError> {
+    println!("=== GET ELEVATION PROFILE ===");
+    println!("Race ID: {}", id);
+    println!("Window size: {:?}", params.window_size);
+    println!("Smoothed: {:?}", params.smoothed);
+    
     // Get the race data
     let row = sqlx::query!(
         r#"SELECT gpx_data FROM races WHERE id = ? AND user_id = ?"#,
@@ -270,7 +276,7 @@ async fn get_elevation_profile(
     // Use elevation processor for smoothing
     use crate::core::services::elevation_processor::ElevationData;
     
-    let smoothed = params.smoothed.unwrap_or(true);
+    let smoothed = true; // Always use smoothing
     let elevation_data = ElevationData::from_gpx_data(&gpx_data, smoothed);
     
     // Convert to elevation profile format
@@ -280,8 +286,10 @@ async fn get_elevation_profile(
             .collect(),
         elevation: elevation_data.enhanced_altitude.clone(),
         smoothed,
-        window_size: params.window_size.unwrap_or(0),
+        window_size: params.window_size.unwrap_or(75), // Default 75m
     };
+    
+    println!("Returning profile with {} points, smoothed={}", profile.distance.len(), smoothed);
     
     Ok(Json(profile))
 }
@@ -292,6 +300,11 @@ async fn get_gradient_distribution(
     Query(params): Query<WindowSizeQuery>,
     State((db_pool, _)): State<(SqlitePool, Settings)>,
 ) -> Result<Json<GradientDistribution>, ApiError> {
+    println!("=== GET GRADIENT DISTRIBUTION ===");
+    println!("Race ID: {}", id);
+    println!("Window size: {:?}", params.window_size);
+    println!("Smoothed: {:?}", params.smoothed);
+    
     // Get the race data
     let row = sqlx::query!(
         r#"SELECT gpx_data FROM races WHERE id = ? AND user_id = ?"#,
@@ -306,13 +319,55 @@ async fn get_gradient_distribution(
     let gpx_data: crate::core::models::race::GpxData = serde_json::from_str(&row.gpx_data)?;
     
     // Calculate gradient distribution
-    // If window size is 0, use a default of 100m for gradient calculations
-    let effective_window = if params.window_size.unwrap_or(0) == 0 { 100 } else { params.window_size.unwrap_or(100) };
+    // Use a fixed 75m window for gradient calculations
+    let effective_window = 75;
     let distribution = calculate_gradient_distribution(&gpx_data, effective_window);
     
     Ok(Json(distribution))
 }
 
-use axum::http::StatusCode;
-
-
+async fn get_race_metrics(
+    Extension(user_id): Extension<String>,
+    Path(id): Path<String>,
+    Query(params): Query<WindowSizeQuery>,
+    State((db_pool, _)): State<(SqlitePool, Settings)>,
+) -> Result<Json<serde_json::Value>, ApiError> {
+    println!("=== GET RACE METRICS ===");
+    println!("Race ID: {}", id);
+    println!("Smoothed: {:?}", params.smoothed);
+    
+    // Get the race data
+    let row = sqlx::query!(
+        r#"SELECT gpx_data FROM races WHERE id = ? AND user_id = ?"#,
+        id,
+        user_id
+    )
+    .fetch_optional(&db_pool)
+    .await?
+    .ok_or_else(|| ApiError::NotFound("Race not found".to_string()))?;
+    
+    // Parse GPX data
+    let gpx_data: crate::core::models::race::GpxData = serde_json::from_str(&row.gpx_data)?;
+    
+    // Calculate metrics with smoothing if requested
+    use crate::core::services::elevation_processor::ElevationData;
+    
+    let smoothed = true; // Always use smoothing
+    let elevation_data = ElevationData::from_gpx_data(&gpx_data, smoothed);
+    
+    // Get the final accumulated values
+    let elevation_gain = elevation_data.accumulated_ascent.last().copied().unwrap_or(0.0);
+    let elevation_loss = elevation_data.accumulated_descent.last().copied().unwrap_or(0.0);
+    
+    // Calculate ITRA with smoothed values
+    let distance_km = elevation_data.cumulative_distance.last().copied().unwrap_or(0.0) / 1000.0;
+    let itra_effort = calculate_itra_effort(distance_km, elevation_gain);
+    
+    println!("Metrics - Gain: {:.1}m, Loss: {:.1}m, ITRA: {:.1}", elevation_gain, elevation_loss, itra_effort);
+    
+    Ok(Json(serde_json::json!({
+        "elevationGainM": elevation_gain,
+        "elevationLossM": elevation_loss,
+        "itraEffortDistance": itra_effort
+    })))
+}

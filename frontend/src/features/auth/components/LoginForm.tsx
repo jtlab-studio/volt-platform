@@ -61,7 +61,7 @@ export const LoginForm: React.FC = () => {
             {...register('email')}
             type="email"
             id="email"
-            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 text-[#121212] dark:text-[#f1f4f8] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
             placeholder={t('auth.emailPlaceholder')}
           />
           {errors.email && (
@@ -80,7 +80,7 @@ export const LoginForm: React.FC = () => {
             {...register('password')}
             type="password"
             id="password"
-            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-2xl bg-white/50 dark:bg-[#1e1e1e]/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 text-[#121212] dark:text-[#f1f4f8] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9800] focus:border-transparent transition-all"
             placeholder={t('auth.passwordPlaceholder')}
           />
           {errors.password && (

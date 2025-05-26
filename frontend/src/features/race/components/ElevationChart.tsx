@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -9,7 +9,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler,
   ChartOptions,
 } from 'chart.js';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +23,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend,
-  Filler
+  Legend
 );
 
 interface ElevationChartProps {
@@ -39,32 +37,35 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
 }) => {
   const { t } = useTranslation();
   
-  useEffect(() => {
-    console.log('=== ELEVATION CHART DATA ===');
-    console.log('Profile points:', profile.distance.length);
-    console.log('Distance range:', profile.distance[0], 'to', profile.distance[profile.distance.length - 1]);
-    console.log('Elevation range:', Math.min(...profile.elevation), 'to', Math.max(...profile.elevation));
-    console.log('Smoothed:', profile.smoothed);
-    console.log('Window size:', profile.windowSize);
-    console.log('========================');
-  }, [profile]);
-  
-  const chartData = useMemo(() => ({
-    labels: profile.distance.map((d) => d.toFixed(1)),
-    datasets: [
-      {
-        label: t('race.elevation'),
-        data: profile.elevation,
-        fill: true,
-        backgroundColor: 'rgba(255, 152, 0, 0.1)',
-        borderColor: '#ff9800',
-        borderWidth: 2,
-        pointRadius: 0,
-        pointHoverRadius: 5,
-        tension: profile.smoothed ? 0.4 : 0,
-      },
-    ],
-  }), [profile, t]);
+  const chartData = useMemo(() => {
+    // Sample the data to reduce points if too many
+    const maxPoints = 200;
+    let distances = profile.distance;
+    let elevations = profile.elevation;
+    
+    if (profile.distance.length > maxPoints) {
+      const step = Math.floor(profile.distance.length / maxPoints);
+      distances = profile.distance.filter((_, i) => i % step === 0);
+      elevations = profile.elevation.filter((_, i) => i % step === 0);
+    }
+    
+    return {
+      labels: distances,
+      datasets: [
+        {
+          label: t('race.elevation'),
+          data: elevations,
+          fill: false,
+          backgroundColor: 'transparent',
+          borderColor: '#ff9800',
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.4,
+        },
+      ],
+    };
+  }, [profile, t]);
   
   const options: ChartOptions<'line'> = useMemo(() => ({
     responsive: true,
@@ -78,8 +79,8 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
         intersect: false,
         callbacks: {
           title: (context) => {
-            const index = context[0].dataIndex;
-            return `${t('race.distance')}: ${profile.distance[index].toFixed(2)} km`;
+            const value = context[0].label;
+            return `${t('race.distance')}: ${parseFloat(value).toFixed(2)} km`;
           },
           label: (context) => {
             return `${t('race.elevation')}: ${context.parsed.y.toFixed(0)} m`;
@@ -89,6 +90,7 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
     },
     scales: {
       x: {
+        type: 'linear',
         display: true,
         title: {
           display: true,
@@ -99,8 +101,10 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
           display: false,
         },
         ticks: {
-          maxTicksLimit: 20,
-          autoSkip: true,
+          maxTicksLimit: 10,
+          callback: function(value) {
+            return value.toFixed(1);
+          }
         },
       },
       y: {
@@ -120,7 +124,7 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
       axis: 'x',
       intersect: false,
     },
-  }), [profile, t]);
+  }), [t]);
   
   if (isLoading) {
     return <SkeletonChart />;
@@ -137,4 +141,3 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
     </GlassPanel>
   );
 };
-

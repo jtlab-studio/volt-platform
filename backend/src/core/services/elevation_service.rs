@@ -1,4 +1,4 @@
-use crate::core::models::race::{GpxData, GpxPoint, ElevationProfile, GradientDistribution, GradientBin};
+use crate::core::models::race::{GpxData, ElevationProfile, GradientDistribution, GradientBin};
 use crate::core::algorithms::gradient_analysis::{analyze_gradients, categorize_gradients};
 
 pub fn calculate_elevation_metrics(gpx_data: &GpxData) -> (f64, f64, f64) {
