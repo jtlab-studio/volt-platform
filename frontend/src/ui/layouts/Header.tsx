@@ -17,14 +17,13 @@ export const Header: React.FC = () => {
   const navigation = [
     { name: t('nav.races'), href: ROUTES.MATCH },
     { name: t('nav.synthesis'), href: ROUTES.SYNTHESIS },
-    { name: t('nav.library'), href: ROUTES.LIBRARY },
   ];
   
   const isActive = (path: string) => location.pathname === path;
   
   return (
     <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto max-w-[95%] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">

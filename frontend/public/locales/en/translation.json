@@ -68,7 +68,9 @@
     "ascentDistribution": "Ascent Gradient Distribution",
     "descentDistribution": "Descent Gradient Distribution",
     "distance": "Distance",
-    "elevation": "Elevation"
+    "elevation": "Elevation",
+    "uploadToStart": "Upload a GPX file to get started",
+    "uploadToViewMetrics": "Upload a file to view metrics"
   },
   "synthesis": {
     "drawRectangle": "Draw a rectangle on the map",

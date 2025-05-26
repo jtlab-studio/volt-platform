@@ -14,7 +14,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, breadcrumbs })
       <Header />
       
       <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-[95%] px-4 sm:px-6 lg:px-8 py-8">
           {breadcrumbs && breadcrumbs.length > 0 && (
             <Breadcrumbs items={breadcrumbs} className="mb-6" />
           )}

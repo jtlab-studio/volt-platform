@@ -81,12 +81,12 @@ export const MapSelector: React.FC<MapSelectorProps> = ({
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               {firstCorner 
-                ? t('synthesis.clickSecondCorner')
-                : t('synthesis.clickFirstCorner')
+                ? ("Click to set second corner")
+                : ("Click to set first corner")
               }
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              {t('synthesis.rightClickReset')}
+              {("Right-click to reset")}
             </p>
           </div>
         </GlassPanel>
@@ -141,3 +141,4 @@ export const MapSelector: React.FC<MapSelectorProps> = ({
     </div>
   );
 };
+

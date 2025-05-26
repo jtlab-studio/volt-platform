@@ -15,7 +15,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
 import { SkeletonChart } from '../../../ui/components/Skeleton';
-import { CHART_OPTIONS } from '../../../core/config/constants';
 import type { ElevationProfile } from '../../../core/types/race';
 
 ChartJS.register(
@@ -40,7 +39,6 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
 }) => {
   const { t } = useTranslation();
   
-  // Log the profile data
   useEffect(() => {
     console.log('=== ELEVATION CHART DATA ===');
     console.log('Profile points:', profile.distance.length);
@@ -69,7 +67,8 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
   }), [profile, t]);
   
   const options: ChartOptions<'line'> = useMemo(() => ({
-    ...CHART_OPTIONS,
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -98,6 +97,10 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
         },
         grid: {
           display: false,
+        },
+        ticks: {
+          maxTicksLimit: 20,
+          autoSkip: true,
         },
       },
       y: {
@@ -128,7 +131,7 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
       <h3 className="text-lg font-semibold text-[#121212] dark:text-[#f1f4f8] mb-4">
         {t('race.elevationProfile')}
       </h3>
-      <div className="h-[300px]">
+      <div className="h-[400px] w-full">
         <Line data={chartData} options={options} />
       </div>
       {profile.smoothed && (

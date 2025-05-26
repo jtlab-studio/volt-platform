@@ -5,6 +5,7 @@ import { MapSelector } from '../features/synthesis/components/MapSelector';
 import { SynthesisControls } from '../features/synthesis/components/SynthesisControls';
 import { RouteResults } from '../features/synthesis/components/RouteResults';
 import { RouteDetail } from '../features/synthesis/components/RouteDetail';
+import { RaceLibrarySidebar } from '../features/race/components/RaceLibrarySidebar';
 import { useSynthesisStore } from '../features/synthesis/stores/synthesisStore';
 import { useSynthesis } from '../features/synthesis/hooks/useSynthesis';
 import { useElevationProfile } from '../features/race/hooks/useRaces';
@@ -15,6 +16,7 @@ const SynthesisPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { addToast } = useUIStore();
   const [isSaving, setIsSaving] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   const {
     referenceRaceId,
@@ -38,13 +40,11 @@ const SynthesisPage: React.FC = () => {
     error,
   } = useSynthesis();
   
-  // Load elevation profile for selected result
   const { profile } = useElevationProfile(
     selectedResult?.id || '',
     rollingWindow
   );
   
-  // Set reference race from URL params
   useEffect(() => {
     const refId = searchParams.get('ref');
     if (refId) {
@@ -110,61 +110,72 @@ const SynthesisPage: React.FC = () => {
   };
   
   return (
-    <div className="space-y-6">
-      {/* Map and Controls Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <MapSelector
-            onBoundsSelect={setBoundingBox}
-          />
-        </div>
-        
-        <div className="lg:col-span-1">
-          <SynthesisControls
-            selectedRaceId={referenceRaceId}
-            rollingWindow={rollingWindow}
-            maxResults={maxResults}
-            onRaceSelect={setReferenceRace}
-            onWindowChange={setRollingWindow}
-            onMaxResultsChange={setMaxResults}
-            onStartSynthesis={handleStartSynthesis}
-            isLoading={isGenerating}
-            canStart={!!referenceRaceId && !!boundingBox}
-          />
-        </div>
-      </div>
-      
-      {/* Results and Details Row */}
-      {(results.length > 0 || isGenerating || error) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <RouteResults
-              results={results}
-              selectedResultId={selectedResult?.id || null}
-              onResultSelect={selectResult}
-              isLoading={isGenerating}
-            />
+    <div className="flex gap-4 -mx-4 sm:-mx-6 lg:-mx-8">
+      {/* Main Content Area */}
+      <div className={`flex-1 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isSidebarOpen ? 'mr-80' : ''}`}>
+        <div className="space-y-6 max-w-full">
+          {/* Map and Controls Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <MapSelector
+                onBoundsSelect={setBoundingBox}
+              />
+            </div>
+            
+            <div className="lg:col-span-1">
+              <SynthesisControls
+                selectedRaceId={referenceRaceId}
+                rollingWindow={rollingWindow}
+                maxResults={maxResults}
+                onRaceSelect={setReferenceRace}
+                onWindowChange={setRollingWindow}
+                onMaxResultsChange={setMaxResults}
+                onStartSynthesis={handleStartSynthesis}
+                isLoading={isGenerating}
+                canStart={!!referenceRaceId && !!boundingBox}
+              />
+            </div>
           </div>
           
-          {selectedResult && (
-            <div>
-              <RouteDetail
-                result={selectedResult}
-                elevationProfile={profile}
-                onDownload={handleDownload}
-                onSaveToLibrary={handleSaveToLibrary}
-                isSaving={isSaving}
-              />
+          {/* Results and Details Row */}
+          {(results.length > 0 || isGenerating || error) && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <RouteResults
+                  results={results}
+                  selectedResultId={selectedResult?.id || null}
+                  onResultSelect={selectResult}
+                  isLoading={isGenerating}
+                />
+              </div>
+              
+              {selectedResult && (
+                <div>
+                  <RouteDetail
+                    result={selectedResult}
+                    elevationProfile={profile}
+                    onDownload={handleDownload}
+                    onSaveToLibrary={handleSaveToLibrary}
+                    isSaving={isSaving}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          
+          {error && (
+            <div className="p-4 rounded-lg bg-[#dc143c]/10 border border-[#dc143c]/20">
+              <p className="text-[#dc143c]">{error}</p>
             </div>
           )}
         </div>
-      )}
+      </div>
       
-      {error && (
-        <div className="p-4 rounded-lg bg-[#dc143c]/10 border border-[#dc143c]/20">
-          <p className="text-[#dc143c]">{error}</p>
-        </div>
-      )}
+      {/* Library Sidebar */}
+      <RaceLibrarySidebar
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+      />
     </div>
   );
 };

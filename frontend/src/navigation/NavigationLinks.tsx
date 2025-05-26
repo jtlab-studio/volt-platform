@@ -12,7 +12,6 @@ interface NavigationLink {
 const navigationLinks: NavigationLink[] = [
   { to: ROUTES.MATCH, labelKey: 'nav.races' },
   { to: ROUTES.SYNTHESIS, labelKey: 'nav.synthesis' },
-  { to: ROUTES.LIBRARY, labelKey: 'nav.library' },
 ];
 
 interface NavigationLinksProps {

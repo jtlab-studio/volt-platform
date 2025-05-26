@@ -7,7 +7,11 @@ import { gpxFileSchema } from '../../../core/utils/validation';
 import { useRaceStore } from '../stores/raceStore';
 import clsx from 'clsx';
 
-export const GpxUpload: React.FC = () => {
+interface GpxUploadProps {
+  compact?: boolean;
+}
+
+export const GpxUpload: React.FC<GpxUploadProps> = ({ compact = false }) => {
   const { t } = useTranslation();
   const { uploadGpx, isUploading, error } = useRaceStore();
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -46,7 +50,7 @@ export const GpxUpload: React.FC = () => {
   const displayError = validationError || error;
   
   return (
-    <div className="space-y-4">
+    <div className={clsx('space-y-2', compact && 'max-w-xs')}>
       <GlassPanel
         {...getRootProps()}
         className={clsx(
@@ -57,31 +61,44 @@ export const GpxUpload: React.FC = () => {
         )}
       >
         <input {...getInputProps()} />
-        <div className="text-center py-12 px-6">
-          <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600 mb-4" />
-          <p className="text-base font-medium text-[#121212] dark:text-[#f1f4f8] mb-2">
+        <div className={clsx(
+          'text-center',
+          compact ? 'py-4 px-3' : 'py-12 px-6'
+        )}>
+          <CloudArrowUpIcon className={clsx(
+            'mx-auto text-gray-400 dark:text-gray-600 mb-2',
+            compact ? 'h-8 w-8' : 'h-12 w-12'
+          )} />
+          <p className={clsx(
+            'font-medium text-[#121212] dark:text-[#f1f4f8]',
+            compact ? 'text-sm' : 'text-base mb-2'
+          )}>
             {isDragActive ? t('race.dropFile') : t('race.uploadGpx')}
           </p>
-          <p className="text-sm text-[#14181b] dark:text-[#ffffff]">
-            {t('race.dragDropOrClick')}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            {t('race.maxFileSize')}
-          </p>
+          {!compact && (
+            <>
+              <p className="text-sm text-[#14181b] dark:text-[#ffffff]">
+                {t('race.dragDropOrClick')}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                {t('race.maxFileSize')}
+              </p>
+            </>
+          )}
         </div>
       </GlassPanel>
       
       {displayError && (
-        <div className="p-3 rounded-lg bg-[#dc143c]/10 border border-[#dc143c]/20">
-          <p className="text-sm text-[#dc143c]">{displayError}</p>
+        <div className="p-2 rounded-lg bg-[#dc143c]/10 border border-[#dc143c]/20">
+          <p className="text-xs text-[#dc143c]">{displayError}</p>
         </div>
       )}
       
       {isUploading && (
         <div className="text-center">
           <div className="inline-flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#ff9800]" />
-            <span className="text-sm text-[#14181b] dark:text-[#ffffff]">
+            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#ff9800]" />
+            <span className="text-xs text-[#14181b] dark:text-[#ffffff]">
               {t('race.uploading')}
             </span>
           </div>
