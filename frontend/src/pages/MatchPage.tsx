@@ -18,9 +18,9 @@ const MatchPage: React.FC = () => {
   // Use a ref to track if we've already updated metrics
   const metricsUpdatedRef = useRef<string | null>(null);
   
-  // Always use smoothing with 75m window
+  // Always use smoothing with 100m window
   const isSmoothed = true;
-  const windowSize = 75;
+  const windowSize = 100;
   
   const { profile, isLoading: profileLoading } = useElevationProfile(
     selectedRace?.id || '',
@@ -46,7 +46,7 @@ const MatchPage: React.FC = () => {
       metricsUpdatedRef.current = metricsKey;
       updateRaceMetrics(selectedRace.id, metrics);
     }
-  }, [metrics, selectedRace?.id]);
+  }, [metrics, selectedRace?.id, updateRaceMetrics]);
   
   return (
     <div className="flex gap-4 -mx-4 sm:-mx-6 lg:-mx-8">

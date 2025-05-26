@@ -163,8 +163,9 @@ impl ElevationData {
         let hilliness_ratio = self.overall_uphill_gradient;
         
         // Apply rolling mean smoothing only if hilliness ratio is below 20m/km
+        // Use 100m window for smoothing
         if hilliness_ratio < 20.0 {
-            self.altitude_change = Self::rolling_mean(&self.altitude_change, 75);
+            self.altitude_change = Self::rolling_mean(&self.altitude_change, 100);
             self.calculate_gradients();
         }
     }

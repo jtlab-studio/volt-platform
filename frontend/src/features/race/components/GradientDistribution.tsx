@@ -11,7 +11,6 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { useTranslation } from 'react-i18next';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { GlassPanel } from '../../../ui/components/GlassPanel';
 import { SkeletonChart } from '../../../ui/components/Skeleton';
 import type { GradientDistribution as GradientDistributionType } from '../../../core/types/race';
@@ -22,8 +21,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend,
-  ChartDataLabels
+  Legend
 );
 
 interface GradientDistributionProps {
@@ -70,7 +68,7 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
     maintainAspectRatio: false,
     layout: {
       padding: {
-        top: 20, // Add more top padding for labels
+        top: 30,
         bottom: 0,
         left: 10,
         right: 10,
@@ -91,19 +89,30 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
           },
         },
       },
-      datalabels: {
-        anchor: 'end',
-        align: 'top',
-        offset: 4,
-        color: '#666',
-        font: {
-          size: 11,
-          weight: 'bold',
-        },
-        formatter: (value: number) => {
-          return value > 5 ? `${value.toFixed(0)}%` : '';
-        },
-      },
+    },
+    onHover: (event, activeElements, chart) => {
+      // Add percentage labels on top of bars
+      const ctx = chart.ctx;
+      ctx.save();
+      
+      chart.data.datasets.forEach((dataset, datasetIndex) => {
+        const meta = chart.getDatasetMeta(datasetIndex);
+        
+        meta.data.forEach((bar, index) => {
+          const value = dataset.data[index] as number;
+          if (value > 5) {
+            const { x, y } = bar.tooltipPosition();
+            
+            ctx.fillStyle = '#666';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(`${value.toFixed(0)}%`, x, y - 5);
+          }
+        });
+      });
+      
+      ctx.restore();
     },
     scales: {
       x: {
@@ -126,7 +135,7 @@ export const GradientDistribution: React.FC<GradientDistributionProps> = ({
         max: Math.max(
           Math.max(...distribution.ascent.map(d => d.percentage)),
           Math.max(...distribution.descent.map(d => d.percentage))
-        ) * 1.3, // Increase max to make room for labels
+        ) * 1.3,
       },
     },
   });

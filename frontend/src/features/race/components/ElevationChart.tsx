@@ -62,6 +62,11 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
           pointRadius: 0,
           pointHoverRadius: 4,
           tension: 0.4,
+          // Disable point labels
+          pointHitRadius: 10,
+          pointHoverBackgroundColor: '#ff9800',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 2,
         },
       ],
     };
@@ -77,10 +82,11 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
       tooltip: {
         mode: 'index',
         intersect: false,
+        displayColors: false,
         callbacks: {
           title: (context) => {
-            const value = context[0].label;
-            return `${t('race.distance')}: ${parseFloat(value).toFixed(2)} km`;
+            const value = context[0].parsed.x;
+            return `${t('race.distance')}: ${value.toFixed(2)} km`;
           },
           label: (context) => {
             return `${t('race.elevation')}: ${context.parsed.y.toFixed(0)} m`;
@@ -117,6 +123,11 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
         },
+        ticks: {
+          callback: function(value) {
+            return value.toFixed(0);
+          }
+        },
       },
     },
     interaction: {
@@ -134,6 +145,11 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
     <GlassPanel>
       <h3 className="text-lg font-semibold text-[#121212] dark:text-[#f1f4f8] mb-4">
         {t('race.elevationProfile')}
+        {profile.smoothed && (
+          <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+            ({t('race.smoothedWindow', { size: profile.windowSize })})
+          </span>
+        )}
       </h3>
       <div className="h-[400px] w-full">
         <Line data={chartData} options={options} />
