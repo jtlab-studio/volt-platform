@@ -15,6 +15,20 @@ try {
   console.error('Environment validation failed:', error);
 }
 
+// Create a wrapper component to apply future flags
+const RouterWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
+      {children}
+    </BrowserRouter>
+  );
+};
+
 function App() {
   const { toasts, removeToast } = useUIStore();
   const { initialize } = useAuthStore();
@@ -33,10 +47,10 @@ function App() {
         errorRetryInterval: 1000,
       }}
     >
-      <BrowserRouter>
+      <RouterWrapper>
         <AppRouter />
         <ToastContainer toasts={toasts} onClose={removeToast} />
-      </BrowserRouter>
+      </RouterWrapper>
     </SWRConfig>
   );
 }
