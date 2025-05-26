@@ -1,31 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RaceLibrarySidebar } from '../features/race/components/RaceLibrarySidebar';
 import { ElevationChart } from '../features/race/components/ElevationChart';
 import { GradientDistribution } from '../features/race/components/GradientDistribution';
 import { RaceMetadata } from '../features/race/components/RaceMetadata';
 import { RollingWindowSelector } from '../features/race/components/RollingWindowSelector';
+import { SmoothingToggle } from '../features/race/components/SmoothingToggle';
 import { Button } from '../ui/components/Button';
 import { useRaceStore } from '../features/race/stores/raceStore';
-import { useElevationProfile, useGradientDistribution } from '../features/race/hooks/useRaces';
+import { useElevationProfile, useGradientDistribution, useRaceMetrics } from '../features/race/hooks/useRaces';
 import { ROUTES } from '../core/config/constants';
 import { Link } from 'react-router-dom';
 
 const MatchPage: React.FC = () => {
   const { t } = useTranslation();
-  const { selectedRace } = useRaceStore();
+  const { selectedRace, updateRaceMetrics } = useRaceStore();
   const [windowSize, setWindowSize] = useState<number>(100);
+  const [isSmoothed, setIsSmoothed] = useState<boolean>(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   const { profile, isLoading: profileLoading } = useElevationProfile(
     selectedRace?.id || '',
-    windowSize
+    windowSize,
+    isSmoothed
   );
   
   const { distribution, isLoading: distributionLoading } = useGradientDistribution(
     selectedRace?.id || '',
-    windowSize
+    windowSize,
+    isSmoothed
   );
+  
+  const { metrics, isLoading: metricsLoading } = useRaceMetrics(
+    selectedRace?.id || '',
+    isSmoothed
+  );
+  
+  // Update race metrics when smoothed metrics are loaded
+  useEffect(() => {
+    if (metrics && selectedRace) {
+      updateRaceMetrics(selectedRace.id, metrics);
+    }
+  }, [metrics, selectedRace, updateRaceMetrics]);
   
   return (
     <div className="flex gap-4 -mx-4 sm:-mx-6 lg:-mx-8">
@@ -38,7 +54,7 @@ const MatchPage: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                 {/* Race Metadata - Left */}
                 <div className="lg:col-span-1">
-                  <RaceMetadata race={selectedRace} />
+                  <RaceMetadata race={selectedRace} isSmoothed={isSmoothed} />
                 </div>
                 
                 {/* Gradient Distributions - Center (spans 2 columns) */}
@@ -68,8 +84,12 @@ const MatchPage: React.FC = () => {
                 />
               )}
               
-              {/* Action Button */}
-              <div className="flex justify-end">
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center">
+                <SmoothingToggle
+                  isSmoothed={isSmoothed}
+                  onToggle={setIsSmoothed}
+                />
                 <Link to={`${ROUTES.SYNTHESIS}?ref=${selectedRace.id}`}>
                   <Button size="lg">
                     {t('race.generateSimilar')}

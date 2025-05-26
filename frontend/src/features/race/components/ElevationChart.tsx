@@ -134,11 +134,7 @@ export const ElevationChart: React.FC<ElevationChartProps> = ({
       <div className="h-[400px] w-full">
         <Line data={chartData} options={options} />
       </div>
-      {profile.smoothed && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          {t('race.smoothedWindow', { size: profile.windowSize })}
-        </p>
-      )}
     </GlassPanel>
   );
 };
+

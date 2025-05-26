@@ -24,6 +24,7 @@ use crate::errors::handlers::ApiError;
 #[derive(Debug, Deserialize)]
 pub struct WindowSizeQuery {
     window_size: Option<u32>,
+    smoothed: Option<bool>,
 }
 
 pub fn routes(db_pool: SqlitePool, settings: Settings) -> Router {
@@ -266,7 +267,21 @@ async fn get_elevation_profile(
     let gpx_data: crate::core::models::race::GpxData = serde_json::from_str(&row.gpx_data)?;
     
     // Calculate elevation profile
-    let profile = calculate_elevation_profile(&gpx_data, params.window_size.unwrap_or(100));
+    // Use elevation processor for smoothing
+    use crate::core::services::elevation_processor::ElevationData;
+    
+    let smoothed = params.smoothed.unwrap_or(true);
+    let elevation_data = ElevationData::from_gpx_data(&gpx_data, smoothed);
+    
+    // Convert to elevation profile format
+    let profile = crate::core::models::race::ElevationProfile {
+        distance: elevation_data.cumulative_distance.iter()
+            .map(|d| d / 1000.0) // Convert to km
+            .collect(),
+        elevation: elevation_data.enhanced_altitude.clone(),
+        smoothed,
+        window_size: params.window_size.unwrap_or(100),
+    };
     
     Ok(Json(profile))
 }
@@ -297,3 +312,4 @@ async fn get_gradient_distribution(
 }
 
 use axum::http::StatusCode;
+

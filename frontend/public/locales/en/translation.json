@@ -70,7 +70,9 @@
     "distance": "Distance",
     "elevation": "Elevation",
     "uploadToStart": "Upload a GPX file to get started",
-    "uploadToViewMetrics": "Upload a file to view metrics"
+    "uploadToViewMetrics": "Upload a file to view metrics",
+    "smooth": "Smooth",
+    "raw": "Raw"
   },
   "synthesis": {
     "drawRectangle": "Draw a rectangle on the map",

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { mutate } from 'swr';
 import { racesApi } from '../api/races';
 import type { Race } from '../../../core/types/race';
+import type { RaceMetrics } from '../api/races';
 
 interface RaceState {
   selectedRace: Race | null;
@@ -12,6 +13,7 @@ interface RaceState {
   uploadGpx: (file: File) => Promise<void>;
   selectRace: (race: Race | null) => void;
   deleteRace: (id: string) => Promise<void>;
+  updateRaceMetrics: (id: string, metrics: RaceMetrics) => void;
   clearError: () => void;
 }
 
@@ -63,6 +65,22 @@ export const useRaceStore = create<RaceState>((set) => ({
         error: error.message || 'Delete failed',
       });
     }
+  },
+  
+  updateRaceMetrics: (id, metrics) => {
+    set((state) => {
+      if (state.selectedRace?.id === id) {
+        return {
+          selectedRace: {
+            ...state.selectedRace,
+            smoothedElevationGainM: metrics.elevationGainM,
+            smoothedElevationLossM: metrics.elevationLossM,
+            smoothedItraEffortDistance: metrics.itraEffortDistance,
+          },
+        };
+      }
+      return state;
+    });
   },
   
   clearError: () => {

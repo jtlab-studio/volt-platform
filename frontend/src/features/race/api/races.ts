@@ -2,6 +2,12 @@ import { apiClient } from '../../../api/client';
 import { toCamelCase } from '../../../core/utils/transform';
 import type { Race, ElevationProfile, GradientDistribution } from '../../../core/types/race';
 
+export interface RaceMetrics {
+  elevationGainM: number;
+  elevationLossM: number;
+  itraEffortDistance: number;
+}
+
 export const racesApi = {
   uploadGpx: async (file: File): Promise<Race> => {
     const formData = new FormData();
@@ -28,20 +34,40 @@ export const racesApi = {
   
   getElevationProfile: async (
     id: string,
-    windowSize: number
+    windowSize: number,
+    smoothed: boolean = true
   ): Promise<ElevationProfile> => {
     const response = await apiClient.get(`/races/${id}/elevation`, {
-      params: { window_size: windowSize },
+      params: { 
+        window_size: windowSize,
+        smoothed: smoothed
+      },
     });
     return toCamelCase(response.data);
   },
   
   getGradientDistribution: async (
     id: string,
-    windowSize: number
+    windowSize: number,
+    smoothed: boolean = true
   ): Promise<GradientDistribution> => {
     const response = await apiClient.get(`/races/${id}/gradient`, {
-      params: { window_size: windowSize },
+      params: { 
+        window_size: windowSize,
+        smoothed: smoothed
+      },
+    });
+    return toCamelCase(response.data);
+  },
+  
+  getRaceMetrics: async (
+    id: string,
+    smoothed: boolean = true
+  ): Promise<RaceMetrics> => {
+    const response = await apiClient.get(`/races/${id}/metrics`, {
+      params: { 
+        smoothed: smoothed
+      },
     });
     return toCamelCase(response.data);
   },

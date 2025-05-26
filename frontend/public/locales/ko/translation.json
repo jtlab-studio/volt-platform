@@ -70,7 +70,9 @@
     "distance": "거리",
     "elevation": "고도",
     "uploadToStart": "시작하려면 GPX 파일을 업로드하세요",
-    "uploadToViewMetrics": "메트릭을 보려면 파일을 업로드하세요"
+    "uploadToViewMetrics": "메트릭을 보려면 파일을 업로드하세요",
+    "smooth": "부드럽게",
+    "raw": "원본"
   },
   "synthesis": {
     "drawRectangle": "지도에 사각형을 그리세요",

@@ -5,10 +5,24 @@ import type { Race } from '../../../core/types/race';
 
 interface RaceMetadataProps {
   race: Race;
+  isSmoothed: boolean;
 }
 
-export const RaceMetadata: React.FC<RaceMetadataProps> = ({ race }) => {
+export const RaceMetadata: React.FC<RaceMetadataProps> = ({ race, isSmoothed }) => {
   const { t } = useTranslation();
+  
+  // Use smoothed values if available and smoothing is enabled
+  const elevationGain = isSmoothed && race.smoothedElevationGainM !== undefined 
+    ? race.smoothedElevationGainM 
+    : race.elevationGainM;
+    
+  const elevationLoss = isSmoothed && race.smoothedElevationLossM !== undefined
+    ? race.smoothedElevationLossM
+    : race.elevationLossM;
+    
+  const itraEffort = isSmoothed && race.smoothedItraEffortDistance !== undefined
+    ? race.smoothedItraEffortDistance
+    : race.itraEffortDistance;
   
   return (
     <GlassPanel padding="sm" className="h-[200px] flex flex-col">
@@ -31,7 +45,7 @@ export const RaceMetadata: React.FC<RaceMetadataProps> = ({ race }) => {
             {t('race.elevationGain')}
           </p>
           <p className="text-lg font-semibold text-[#249689]">
-            ↑ {race.elevationGainM.toFixed(0)} m
+            ↑ {elevationGain.toFixed(0)} m
           </p>
         </div>
         
@@ -40,7 +54,7 @@ export const RaceMetadata: React.FC<RaceMetadataProps> = ({ race }) => {
             {t('race.elevationLoss')}
           </p>
           <p className="text-lg font-semibold text-[#dc143c]">
-            ↓ {race.elevationLossM.toFixed(0)} m
+            ↓ {elevationLoss.toFixed(0)} m
           </p>
         </div>
         
@@ -49,7 +63,7 @@ export const RaceMetadata: React.FC<RaceMetadataProps> = ({ race }) => {
             {t('race.itraEffortDistance')}
           </p>
           <p className="text-lg font-semibold text-[#ff9800]">
-            {race.itraEffortDistance.toFixed(1)}
+            {itraEffort.toFixed(1)}
           </p>
         </div>
       </div>

@@ -38,10 +38,10 @@ export const useRace = (id: string) => {
   };
 };
 
-export const useElevationProfile = (id: string, windowSize: number) => {
+export const useElevationProfile = (id: string, windowSize: number, smoothed: boolean = true) => {
   const { data, error } = useSWR(
-    id ? `/races/${id}/elevation/${windowSize}` : null,
-    () => racesApi.getElevationProfile(id, windowSize),
+    id ? `/races/${id}/elevation/${windowSize}/${smoothed}` : null,
+    () => racesApi.getElevationProfile(id, windowSize, smoothed),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -55,10 +55,10 @@ export const useElevationProfile = (id: string, windowSize: number) => {
   };
 };
 
-export const useGradientDistribution = (id: string, windowSize: number) => {
+export const useGradientDistribution = (id: string, windowSize: number, smoothed: boolean = true) => {
   const { data, error } = useSWR(
-    id ? `/races/${id}/gradient/${windowSize}` : null,
-    () => racesApi.getGradientDistribution(id, windowSize),
+    id ? `/races/${id}/gradient/${windowSize}/${smoothed}` : null,
+    () => racesApi.getGradientDistribution(id, windowSize, smoothed),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -67,6 +67,23 @@ export const useGradientDistribution = (id: string, windowSize: number) => {
   
   return {
     distribution: data,
+    isLoading: !error && !data,
+    error: error?.message,
+  };
+};
+
+export const useRaceMetrics = (id: string, smoothed: boolean = true) => {
+  const { data, error } = useSWR(
+    id ? `/races/${id}/metrics/${smoothed}` : null,
+    () => racesApi.getRaceMetrics(id, smoothed),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+  
+  return {
+    metrics: data,
     isLoading: !error && !data,
     error: error?.message,
   };

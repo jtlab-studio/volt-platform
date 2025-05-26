@@ -17,6 +17,10 @@ export interface Race {
   elevationLossM: number;
   itraEffortDistance: number;
   createdAt: string;
+  // Smoothed versions
+  smoothedElevationGainM?: number;
+  smoothedElevationLossM?: number;
+  smoothedItraEffortDistance?: number;
 }
 
 export interface GradientBin {
