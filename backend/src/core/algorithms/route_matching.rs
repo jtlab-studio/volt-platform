@@ -19,7 +19,7 @@ impl Default for RouteMatchingConfig {
 }
 
 pub fn find_similar_routes(
-    reference: &GpxData,
+    _reference: &GpxData,  // Prefix with underscore to indicate it's intentionally unused
     reference_metrics: (f64, f64, f64), // distance, gain, loss
     candidates: Vec<RouteCandidate>,
     config: RouteMatchingConfig,

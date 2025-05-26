@@ -22,7 +22,7 @@ pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
                             lat: point.point().y(),
                             lon: point.point().x(),
                             ele: point.elevation.unwrap_or(0.0),
-                            time: point.time.map(|t| t.format().to_string()),
+                            time: point.time.and_then(|t| t.format().ok()),
                         });
                     }
                 }
@@ -36,7 +36,7 @@ pub fn parse_gpx(gpx_content: &str) -> Result<GpxData, ApiError> {
                         lat: waypoint.point().y(),
                         lon: waypoint.point().x(),
                         ele: waypoint.elevation.unwrap_or(0.0),
-                        time: waypoint.time.map(|t| t.format().to_string()),
+                        time: waypoint.time.and_then(|t| t.format().ok()),
                     });
                 }
             }
