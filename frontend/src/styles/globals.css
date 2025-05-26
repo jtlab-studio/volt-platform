@@ -1,0 +1,127 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+/* Custom CSS variables */
+@layer base {
+  :root {
+    --color-primary: #252525;
+    --color-secondary: #ff9800;
+    --color-tertiary: #ff5722;
+    --color-success: #249689;
+    --color-error: #dc143c;
+    --color-warning: #fce62f;
+  }
+}
+
+/* Base styles */
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+  
+  /* Remove spinner from number inputs */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* Custom animations */
+@layer utilities {
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out;
+  }
+  
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+/* Leaflet fixes */
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-draw-toolbar a {
+  background-color: white;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.leaflet-draw-toolbar a:hover {
+  background-color: #f4f4f4;
+}
+
+/* Chart.js responsive container */
+.chart-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* Custom scrollbar */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+  }
+}
+
+/* Focus visible styles */
+@layer utilities {
+  .focus-visible:focus {
+    @apply outline-none;
+  }
+  
+  .focus-visible:focus-visible {
+    @apply ring-2 ring-offset-2 ring-[#ff9800];
+  }
+}

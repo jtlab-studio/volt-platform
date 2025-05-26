@@ -1,0 +1,116 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류",
+    "success": "성공",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "close": "닫기",
+    "confirm": "확인",
+    "back": "뒤로",
+    "next": "다음",
+    "search": "검색",
+    "filter": "필터",
+    "noData": "데이터가 없습니다"
+  },
+  "nav": {
+    "races": "레이스",
+    "synthesis": "스마트 합성",
+    "library": "라이브러리"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "signUp": "회원가입",
+    "getStarted": "시작하기",
+    "loginTitle": "다시 오신 것을 환영합니다",
+    "signUpTitle": "계정 만들기",
+    "email": "이메일",
+    "emailPlaceholder": "you@example.com",
+    "password": "비밀번호",
+    "passwordPlaceholder": "비밀번호를 입력하세요",
+    "confirmPassword": "비밀번호 확인",
+    "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
+    "username": "사용자명",
+    "usernamePlaceholder": "사용자명을 선택하세요",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "noAccount": "계정이 없으신가요?",
+    "haveAccount": "이미 계정이 있으신가요?",
+    "activityType": "활동 유형",
+    "optional": "선택사항",
+    "hiker": "하이커",
+    "cyclist": "사이클리스트",
+    "runner": "러너"
+  },
+  "race": {
+    "uploadGpx": "GPX 파일 업로드",
+    "dropFile": "여기에 파일을 놓으세요",
+    "dragDropOrClick": "드래그 앤 드롭 또는 클릭하여 찾아보기",
+    "maxFileSize": "최대 파일 크기: 50MB",
+    "uploading": "업로드 중...",
+    "myLibrary": "내 라이브러리",
+    "noRaces": "아직 업로드된 레이스가 없습니다",
+    "viewOverview": "보기",
+    "generateSimilar": "생성",
+    "totalDistance": "총 거리",
+    "elevationGain": "누적 상승",
+    "elevationLoss": "누적 하강",
+    "itraEffortDistance": "ITRA 노력 거리",
+    "rollingWindowSize": "이동 창 크기",
+    "elevationProfile": "고도 프로필",
+    "smoothedWindow": "{{size}}m 창으로 스무딩됨",
+    "gradient": "경사도",
+    "percentage": "경로 비율",
+    "ascent": "오르막",
+    "descent": "내리막",
+    "ascentDistribution": "오르막 경사도 분포",
+    "descentDistribution": "내리막 경사도 분포",
+    "distance": "거리",
+    "elevation": "고도"
+  },
+  "synthesis": {
+    "drawRectangle": "지도에 사각형을 그리세요",
+    "controls": "합성 제어",
+    "referenceRace": "참조 레이스",
+    "selectRace": "레이스를 선택하세요",
+    "rollingWindow": "이동 창",
+    "maxResults": "최대 결과",
+    "startSynthesis": "합성 시작",
+    "results": "결과",
+    "noResults": "결과를 찾을 수 없습니다",
+    "similarity": "유사도",
+    "view": "보기",
+    "routeDetail": "경로 상세",
+    "downloadGpx": "GPX 다운로드",
+    "saveToLibrary": "라이브러리에 저장"
+  },
+  "footer": {
+    "terms": "약관",
+    "privacy": "개인정보",
+    "contact": "문의"
+  },
+  "landing": {
+    "hero": {
+      "title": "레이스처럼 훈련하세요",
+      "subtitle": "목표 레이스 프로필과 일치하는 로컬 경로를 찾으세요",
+      "cta": "시작하기"
+    },
+    "features": {
+      "title": "운동선수를 위한 설계",
+      "analyze": {
+        "title": "모든 레이스 분석",
+        "description": "GPX 파일을 업로드하여 즉시 고도 프로필과 경사도 분포를 확인하세요"
+      },
+      "generate": {
+        "title": "유사한 경로 생성",
+        "description": "AI가 레이스의 지형 특성과 일치하는 로컬 경로를 찾습니다"
+      },
+      "train": {
+        "title": "효과적인 훈련",
+        "description": "목표 레이스 조건을 반영하는 지형에서 연습하세요"
+      }
+    }
+  }
+}
