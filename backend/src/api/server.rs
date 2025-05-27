@@ -1,6 +1,7 @@
 use axum::{
     Router,
     Extension,
+    extract::DefaultBodyLimit,
 };
 use sqlx::SqlitePool;
 use tower_http::cors::{CorsLayer, Any};
@@ -17,9 +18,10 @@ pub fn create_app(db_pool: SqlitePool, settings: Settings) -> Router {
         .allow_headers(Any)
         .expose_headers(Any);
     
-    // Create router
+    // Create router with increased body limit for file uploads
     Router::new()
         .nest("/api/v1", api_routes(db_pool.clone(), settings.clone()))
+        .layer(DefaultBodyLimit::max(52_428_800)) // 50MB limit
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .layer(Extension(db_pool))

@@ -10,16 +10,31 @@ export interface RaceMetrics {
 
 export const racesApi = {
   uploadGpx: async (file: File): Promise<Race> => {
+    console.log('[racesApi] Uploading GPX file:', file.name, 'Size:', file.size);
+    
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file, file.name);
     
-    const response = await apiClient.post('/races', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    
-    return toCamelCase(response.data);
+    try {
+      const response = await apiClient.post('/races', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 120000, // 2 minute timeout for upload
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            console.log(`[racesApi] Upload progress: ${percentCompleted}%`);
+          }
+        },
+      });
+      
+      console.log('[racesApi] Upload successful');
+      return toCamelCase(response.data);
+    } catch (error) {
+      console.error('[racesApi] Upload failed:', error);
+      throw error;
+    }
   },
   
   getRaces: async (): Promise<Race[]> => {
